@@ -46,7 +46,7 @@ nav a{margin-left:24px}
 .two{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
 .four{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
 
-/* Global properties shared across all regular card elements */
+/* Global standard layout cards */
 .card{
   padding:28px;
   border-radius:24px;
@@ -68,46 +68,51 @@ nav a{margin-left:24px}
 }
 
 /* ==========================================================================
-   NEW: NASA Image-Sizing Rules (Only for Services & Divisions)
+   NEW: NASA Structural Image Engine (No gaps, No zooming)
    ========================================================================== */
 
-/* Triggers uncropped graphic frame parameters across the 2 Launch Frameworks */
+/* Gives specific canvas framing heights for media content structures */
 #services .card {
-  min-height: 280px; /* Perfectly scaled to fit landscape assets */
-  justify-content: flex-end; 
-  align-items: flex-start;
-  background-size: contain;
-  background-position: right center; /* Shifts asset to the right side of card */
-  background-repeat: no-repeat;
+  min-height: 340px; 
 }
 
-/* Triggers uncropped graphic frame parameters across the 4 Divisions grid */
 #divisions .card {
-  min-height: 180px;
-  justify-content: flex-end;
-  align-items: flex-start;
-  background-size: contain;
-  background-position: center bottom; /* Drops division visuals to the base */
-  background-repeat: no-repeat;
+  min-height: 200px;
 }
 
-/* Protects text line readability inside media container blocks */
-#services .card::before,
-#divisions .card::before {
-  content: '';
+/* The actual image asset element stretched edge-to-edge with absolute zero gaps */
+.card-bg-img {
   position: absolute;
   inset: 0;
-  /* Dark backdrop layer behind text elements to make white copy pop */
-  background: linear-gradient(to top, rgba(2, 6, 23, 0.9) 30%, rgba(2, 6, 23, 0.3) 100%);
+  width: 100%;
+  height: 100%;
+  object-fit: fill; /* Forces entire photo to completely match card boundaries without cropping */
   z-index: 1;
+  transition: transform 0.4s ease;
 }
 
-/* Raises textual strings over graphic assets layers */
-#services .card > *,
-#divisions .card > * {
-  position: relative;
+.card:hover .card-bg-img {
+  transform: scale(1.03); /* Subtle fluid interactive zoom on mouse-over */
+}
+
+/* High-contrast dark linear protective film overlay protecting white text */
+.card-overlay-film {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.95) 25%, rgba(2, 6, 23, 0.5) 70%, rgba(2, 6, 23, 0.2) 100%);
   z-index: 2;
+}
+
+/* Lifts all copy and buttons safely over graphic elements */
+.card-text-layer {
+  position: relative;
+  z-index: 3;
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
 }
 
 /* ========================================================================== */
@@ -154,8 +159,6 @@ nav a{margin-left:24px}
 @media(max-width:768px){
 nav{display:none}
 .hero h1{font-size:44px}
-/* Reverts spatial rules safely for fluid stacking on mobile displays */
-#services .card { background-position: center bottom; min-height: 320px; }
-#divisions .card { min-height: 160px; }
+#services .card { min-height: 300px; }
+#divisions .card { min-height: 170px; }
 }
-

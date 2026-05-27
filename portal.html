@@ -13,7 +13,7 @@
 
 <header>
   <div class="logo">
-    <a href="index.html"><img src="https://i.imgur.com/R3OBLXe.png alt="STARi Logo"></a>
+    <a href="index.html"><img src="https://i.imgur.com/R3OBLXe.png" alt="STARi Logo"></a>
   </div>
   <nav>
     <a href="index.html">Home</a>
@@ -37,57 +37,129 @@
 
 <!-- DASHBOARD GRID -->
 <section class="section" style="padding-top: 20px;">
-  <div class="grid two" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));">
+  <div class="grid two" style="grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 30px; align-items: start;">
     
-    <!-- Module 1: Interactive Project Coordination -->
-    <div class="card" style="justify-content: flex-start; gap: 15px;">
+    <!-- Module 1: Interactive Multi-Option Booking Interface -->
+    <div class="card" style="justify-content: flex-start; gap: 15px; padding: 35px;">
       <div>
         <span class="tag" style="font-size: 11px; letter-spacing: 2px;">SCHEDULING</span>
         <h2 style="font-size: 26px; margin: 5px 0 10px; font-weight: 800;">Mission Booking</h2>
         <p class="muted" style="font-size: 15px; line-height: 1.5; margin-bottom: 15px;">
-          Lock in your precision farming satellite passes, drone tracking timelines, or mobile planetarium school reservations instantly.
+          Configure your specific operation telemetry profile to commit a task window directly into our systems log.
         </p>
       </div>
       
-      <!-- CALENDLY / SCHEDULER EMBED SLOT -->
-      <div style="background: rgba(2, 6, 23, 0.4); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; padding: 30px 20px; text-align: center; width: 100%;">
-        <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 15px;">Secure Calendar Integration Channel Active</p>
-        <a href="https://calendly.com" target="_blank" class="btn" style="margin-top: 0; padding: 10px 20px; font-size: 14px;">Open Scheduling Engine</a>
-      </div>
-    </div>
-
-    <!-- Module 2: Dashboard Mockup -->
-    <div class="card" style="justify-content: flex-start; gap: 15px; border-color: rgba(103, 232, 249, 0.15);">
-      <div>
-        <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #67e8f9;">ANALYTICS ENGINE</span>
-        <h2 style="font-size: 26px; margin: 5px 0 10px; font-weight: 800;">Data Telemetry Dashboard</h2>
-        <p class="muted" style="font-size: 15px; line-height: 1.5; margin-bottom: 15px;">
-          Live imagery streaming feeds, NDVI classification maps, and construction milestone verifications are currently provisioning.
-        </p>
-      </div>
-
-      <!-- VISUAL DASHBOARD LOOKAHEAD METRICS -->
-      <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 16px;">
-        <div>
-          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-            <span style="color: #67e8f9; font-weight: bold;">🛰️ Orbit Data Stream V5.1</span>
-            <span class="muted">92% Ready</span>
-          </div>
-          <div class="portal-progress-bar"><div class="portal-progress-fill" style="width: 92%;"></div></div>
-        </div>
-
-        <div>
-          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-            <span style="color: #67e8f9; font-weight: bold;">🌱 Crop Analytics Vector Array</span>
-            <span class="muted">Provisioning Pipeline</span>
-          </div>
-          <div class="portal-progress-bar"><div class="portal-progress-fill" style="width: 45%; background: #94a3b8;"></div></div>
-        </div>
+      <!-- DYNAMIC FORM CONTAINER -->
+      <form id="missionForm" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
         
-        <span class="tag" style="font-size: 10px; letter-spacing: 1px; margin-top: 5px; display: block; text-align: center;">SYSTEM INITIALIZATION PIPELINE CURRENTLY RUNNING</span>
-      </div>
+        <!-- Step 1: Base Core Framework Selection -->
+        <div>
+          <label class="form-label">1. Core Service Framework</label>
+          <select id="serviceSelector" class="form-input" required>
+            <option value="" disabled selected style="background:#0f172a;">Choose Service Track...</option>
+            <option value="astronomy" style="background:#0f172a;">Community Astronomy Outreach</option>
+            <option value="remotesensing" style="background:#0f172a;">Remote Sensing Intelligence</option>
+          </select>
+        </div>
+
+        <!-- DEPENDENT TRACK A: ASTRONOMY FIELDS -->
+        <div id="astronomyBlock" style="display: none; flex-direction: column; gap: 20px;">
+          <div>
+            <label class="form-label">Astronomy Focus Model</label>
+            <select class="form-input" name="astro_focus">
+              <option value="day" style="background:#0f172a;">Daytime Event (Solar Observations / Workshops)</option>
+              <option value="night" style="background:#0f172a;">Nighttime Event (Immersive Stargazing Operations)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Engagement Classification</label>
+            <select class="form-input" name="astro_type">
+              <option value="school" style="background:#0f172a;">Educational Institution / School</option>
+              <option value="corporate" style="background:#0f172a;">Corporate Team Building Retreat</option>
+              <option value="family" style="background:#0f172a;">Private Group / Family Gathering</option>
+              <option value="nonprofit" style="background:#0f172a;">Non-Profit / NGO (Church, Orphanage)</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Target Window Date</label>
+            <input type="date" class="form-input" name="astro_date" style="color-scheme: dark;">
+          </div>
+        </div>
+
+        <!-- DEPENDENT TRACK B: REMOTE SENSING FIELDS -->
+        <div id="sensingBlock" style="display: none; flex-direction: column; gap: 20px;">
+          <div>
+            <label class="form-label">Asset Domain Monitoring</label>
+            <select id="sensingDomain" class="form-input" name="sensing_domain">
+              <option value="farming" style="background:#0f172a;">Precision Agriculture Tracking</option>
+              <option value="other" style="background:#0f172a;">Other Spatial Analytics (Specify Below)</option>
+            </select>
+          </div>
+          <div id="sensingSpecifyBlock" style="display: none;">
+            <label class="form-label">Specify Target Domain Requirements</label>
+            <input type="text" class="form-input" name="sensing_specify" placeholder="e.g. Civil Infrastructure or Mining Volumetrics">
+          </div>
+          <div>
+            <label class="form-label">Operational Delivery Route</label>
+            <select class="form-input" name="sensing_route">
+              <option value="consultation" style="background:#0f172a;">Technical Pipeline Consultation Session</option>
+              <option value="dashboard" style="background:#0f172a;">Custom Telemetry Dashboard Provisioning</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">Desired Deployment Launch Date</label>
+            <input type="date" class="form-input" name="sensing_date" style="color-scheme: dark;">
+          </div>
+        </div>
+
+        <button type="submit" class="btn" style="width:100%; border:none; cursor:pointer; justify-content:center;">Commit Flight Plan</button>
+      </form>
     </div>
 
+    <!-- Module 2: Dashboard Mockup & Free Scan Offer -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      
+      <!-- FREE SERVICE AD Block -->
+      <div class="card" style="justify-content: flex-start; gap: 10px; border-color: rgba(103, 232, 249, 0.4); background: linear-gradient(135deg, #071524 0%, #0f172a 100%);">
+        <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #67e8f9;">ZERO COST ENTRY</span>
+        <h2 style="font-size: 22px; font-weight: 800; color: #fff;">Free Rapid Crop Health Scan</h2>
+        <p class="muted" style="font-size: 14px; line-height: 1.5;">
+          Running on your local vegetation indices pipeline. Submit your coordinate perimeter array to unlock a free satellite vector assessment tracking localized canopy stress lines.
+        </p>
+        <a href="contact.html" class="card-link" style="margin-top:5px; font-weight:bold;">Claim Free Diagnostic Array →</a>
+      </div>
+
+      <!-- VISUAL DASHBOARD DATA -->
+      <div class="card" style="justify-content: flex-start; gap: 15px; border-color: rgba(255, 255, 255, 0.04);">
+        <div>
+          <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #94a3b8;">ANALYTICS ENGINE</span>
+          <h2 style="font-size: 26px; margin: 5px 0 10px; font-weight: 800;">Data Telemetry Dashboard</h2>
+          <p class="muted" style="font-size: 15px; line-height: 1.5; margin-bottom: 15px;">
+            Live imagery streaming feeds, NDVI classification maps, and construction milestone verifications are currently provisioning.
+          </p>
+        </div>
+
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 16px;">
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+              <span style="color: #67e8f9; font-weight: bold;">🛰️ Orbit Data Stream V5.1</span>
+              <span class="muted">92% Ready</span>
+            </div>
+            <div class="portal-progress-bar"><div class="portal-progress-fill" style="width: 92%;"></div></div>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+              <span style="color: #67e8f9; font-weight: bold;">🌱 Crop Analytics Vector Array</span>
+              <span class="muted">Provisioning Pipeline</span>
+            </div>
+            <div class="portal-progress-bar"><div class="portal-progress-fill" style="width: 45%; background: #94a3b8;"></div></div>
+          </div>
+          <span class="tag" style="font-size: 10px; letter-spacing: 1px; margin-top: 5px; display: block; text-align: center;">SYSTEM INITIALIZATION PIPELINE CURRENTLY RUNNING</span>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -108,4 +180,3 @@
 <script src="script.js"></script>
 </body>
 </html>
->

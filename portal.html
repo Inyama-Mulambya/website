@@ -1,45 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portal | STARi</title>
-<link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portal | STARi</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
 
+<div class="bg"></div>
+<div class="glow"></div>
+
 <header>
+  <div class="logo">
+    <a href="index.html"><img src="https://imgur.com" alt="STARi Logo"></a>
+  </div>
   <nav>
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
     <a href="services.html">Services</a>
     <a href="portal.html">Portal</a>
+    <a href="contact.html">Contact</a>
   </nav>
 </header>
 
-<section class="section">
-
-  <h1>Client Portal</h1>
-  <p>Access STARi services, reports, and project coordination.</p>
-
-  <div class="card">
-    <h2>Booking</h2>
-    <p>Schedule consultations and service requests.</p>
+<!-- PORTAL HERO -->
+<section class="hero" style="min-height: auto; padding-bottom: 40px;">
+  <div class="hero-wrap">
+    <div class="tag">STARi COMMAND</div>
+    <h1>Client Mission Control</h1>
+    <p style="font-size: 20px; line-height: 1.6; margin-top: 20px;">
+      Manage your space data subscriptions, coordinate engineering consulting timelines, or securely schedule upcoming astronomy outreach deployments.
+    </p>
   </div>
+</section>
 
-  <div class="card">
-    <h2>Contact</h2>
-    <p>Email: hello@stari.space</p>
+<!-- DASHBOARD GRID -->
+<section class="section" style="padding-top: 20px;">
+  <div class="grid two" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));">
+    
+    <!-- Module 1: Interactive Project Coordination -->
+    <div class="card" style="justify-content: flex-start; gap: 15px;">
+      <div>
+        <span class="tag" style="font-size: 11px; letter-spacing: 2px;">SCHEDULING</span>
+        <h2 style="font-size: 26px; margin: 5px 0 10px; font-weight: 800;">Mission Booking</h2>
+        <p class="muted" style="font-size: 15px; line-height: 1.5; margin-bottom: 15px;">
+          Lock in your precision farming satellite passes, drone tracking timelines, or mobile planetarium school reservations instantly.
+        </p>
+      </div>
+      
+      <!-- CALENDLY / SCHEDULER EMBED SLOT -->
+      <div style="background: rgba(2, 6, 23, 0.4); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; padding: 30px 20px; text-align: center; width: 100%;">
+        <p style="font-size: 14px; color: #cbd5e1; margin-bottom: 15px;">Secure Calendar Integration Channel Active</p>
+        <a href="https://calendly.com" target="_blank" class="btn" style="margin-top: 0; padding: 10px 20px; font-size: 14px;">Open Scheduling Engine</a>
+      </div>
+    </div>
+
+    <!-- Module 2: Dashboard Mockup -->
+    <div class="card" style="justify-content: flex-start; gap: 15px; border-color: rgba(103, 232, 249, 0.15);">
+      <div>
+        <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #67e8f9;">ANALYTICS ENGINE</span>
+        <h2 style="font-size: 26px; margin: 5px 0 10px; font-weight: 800;">Data Telemetry Dashboard</h2>
+        <p class="muted" style="font-size: 15px; line-height: 1.5; margin-bottom: 15px;">
+          Live imagery streaming feeds, NDVI classification maps, and construction milestone verifications are currently provisioning.
+        </p>
+      </div>
+
+      <!-- VISUAL DASHBOARD LOOKAHEAD METRICS -->
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; background: rgba(15, 23, 42, 0.6); padding: 20px; border-radius: 16px;">
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <span style="color: #67e8f9; font-weight: bold;">🛰️ Orbit Data Stream V5.1</span>
+            <span class="muted">92% Ready</span>
+          </div>
+          <div class="portal-progress-bar"><div class="portal-progress-fill" style="width: 92%;"></div></div>
+        </div>
+
+        <div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <span style="color: #67e8f9; font-weight: bold;">🌱 Crop Analytics Vector Array</span>
+            <span class="muted">Provisioning Pipeline</span>
+          </div>
+          <div class="portal-progress-bar"><div class="portal-progress-fill" style="width: 45%; background: #94a3b8;"></div></div>
+        </div>
+        
+        <span class="tag" style="font-size: 10px; letter-spacing: 1px; margin-top: 5px; display: block; text-align: center;">SYSTEM INITIALIZATION PIPELINE CURRENTLY RUNNING</span>
+      </div>
+    </div>
+
   </div>
+</section>
 
-  <div class="card">
-    <h2>Future Dashboard</h2>
-    <p>Client data, analytics, and project tracking tools (coming soon).</p>
+<!-- SECURE HELP DESK LAYER -->
+<section class="section" style="padding-top: 0;">
+  <div class="card" style="flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 40px; background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
+    <div style="max-width: 550px;">
+      <span class="tag" style="font-size: 11px; letter-spacing: 2px;">COMMUNICATIONS HUB</span>
+      <h3 style="font-size: 28px; margin: 5px 0 8px; font-weight: 800;">Dedicated Ground Support</h3>
+      <p class="muted" style="font-size: 15px;">Need immediate engineering overrides or custom target modifications for upcoming satellite passes? Get directly in touch with our ground station team.</p>
+    </div>
+    <div>
+      <a href="mailto:hello@stari.space" class="btn" style="margin-top: 0; padding: 14px 35px; box-shadow: 0 0 15px rgba(103, 232, 249, 0.3);">hello@stari.space</a>
+    </div>
   </div>
-
 </section>
 
 <script src="script.js"></script>
 </body>
 </html>
+>

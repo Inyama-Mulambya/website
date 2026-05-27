@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Ground Control | STARi</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="glow"></div>
+
+<header>
+  <div class="logo">
+    <a href="index.html"><img src="https://imgur.com" alt="STARi Logo"></a>
+  </div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="services.html">Services</a>
+    <a href="portal.html">Portal</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<!-- CONTACT HERO -->
+<section class="hero" style="min-height: auto; padding-bottom: 20px;">
+  <div class="hero-wrap">
+    <div class="tag">GROUND CONTROL</div>
+    <h1>Connect With Our Teams</h1>
+    <p style="font-size: 20px; line-height: 1.6; margin-top: 20px;">
+      Initiate a data consultation request or book an experiential mobile planetarium installation. Drop us a transmission below.
+    </p>
+  </div>
+</section>
+
+<!-- CONTACT SPLIT GRID -->
+<section class="section" style="padding-top: 20px;">
+  <div class="grid two" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; align-items: start;">
+    
+    <!-- LEFT PANEL: Direct Corporate Communication Info -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div class="card" style="justify-content: flex-start; padding: 35px;">
+        <span class="tag" style="font-size: 11px; letter-spacing: 2px;">SECURE COMMS</span>
+        <h2 style="font-size: 28px; margin: 5px 0 15px; font-weight: 800;">Direct Inquiries</h2>
+        <p class="muted" style="line-height: 1.6; margin-bottom: 20px;">
+          For immediate engineering overrides, active proposal reviews, or emergency operational support, bypass the layout queues and email our team directly.
+        </p>
+        <a href="mailto:hello@stari.space" class="tag" style="font-size: 20px; text-transform: lowercase; font-weight: bold; letter-spacing: 1px;">hello@stari.space</a>
+      </div>
+
+      <div class="card" style="justify-content: flex-start; padding: 35px; border-color: rgba(255,255,255,0.03);">
+        <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #94a3b8;">LOCATION HINT</span>
+        <h3 style="font-size: 20px; margin: 5px 0 8px; font-weight: 700;">Base Coordinates</h3>
+        <p class="muted" style="font-size: 14px; line-height: 1.5;">
+          Operating out of Lusaka, Zambia, coordinating telemetry vectors and school community missions throughout the Southern African region.
+        </p>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Actionable Input Data Form -->
+    <div class="card" style="justify-content: flex-start; padding: 40px;">
+      <span class="tag" style="font-size: 11px; letter-spacing: 2px;">TRANSMISSION PANEL</span>
+      <h2 style="font-size: 28px; margin: 5px 0 25px; font-weight: 800;">Send Message</h2>
+      
+      <form action="#" method="POST" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+        
+        <div class="form-row-split" style="display: flex; gap: 15px;">
+          <div style="flex: 1;">
+            <label class="form-label">Your Name</label>
+            <input type="text" name="name" class="form-input" placeholder="e.g. Mwansa" required>
+          </div>
+          <div style="flex: 1;">
+            <label class="form-label">Email Address</label>
+            <input type="email" name="email" class="form-input" placeholder="name@domain.com" required>
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label">Organization / School Name</label>
+          <input type="text" name="company" class="form-input" placeholder="e.g. Agri-Corp or Academy Name">
+        </div>
+
+        <div>
+          <label class="form-label">Mission Objective (Service Framework)</label>
+          <select name="objective" class="form-input" style="appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2367e8f9%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 20px top 50%; background-size: 12px auto;" required>
+            <option value="" disabled selected style="background:#0f172a;">Select a Framework...</option>
+            <option value="outreach" style="background:#0f172a;">Community Astronomy Outreach Booking</option>
+            <option value="sensing" style="background:#0f172a;">Remote Sensing / Crop Health Subscriptions</option>
+            <option value="engineering" style="background:#0f172a;">Advanced Systems R&D Consultation</option>
+            <option value="other" style="background:#0f172a;">General Administrative Transmission</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label">Message Details</label>
+          <textarea name="message" class="form-input" rows="5" placeholder="Describe your project scope, target site parameters, or desired booking window details..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; text-align: center; justify-content: center; cursor: pointer; border: none;">Broadcast Message</button>
+
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -61,7 +61,7 @@ nav a{margin-left:24px}
   align-items: flex-start;
   position: relative;
   min-height: 380px; /* Gives adequate frame space for visual elements */
-  background-size: contain;
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease;

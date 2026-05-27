@@ -46,51 +46,67 @@ nav a{margin-left:24px}
 .two{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
 .four{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
 
+/* ==========================================================================
+   UPDATED: Integrated NASA Full-Card Media Layout
+   ========================================================================== */
 .card{
-  padding:28px;
+  padding:32px;
   border-radius:24px;
   background:#0f172a;
   border:1px solid rgba(255,255,255,.06);
-  overflow: hidden; /* Keeps the images perfectly contained in the border-radius */
+  overflow: hidden; 
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end; /* Text sits at the base of the image block */
+  align-items: flex-start;
+  position: relative;
+  min-height: 380px; /* Gives adequate frame space for visual elements */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease;
 }
 
-.center{text-align:center}
+/* Optional variation modifier to prevent metrics layout blocks from overflowing */
+.center { text-align: center; justify-content: center; align-items: center; }
+
+/* The dark protective vignette gradient layer layered behind text copy */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.95) 15%, rgba(2, 6, 23, 0.5) 65%, rgba(2, 6, 23, 0.1) 100%);
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Forces structural element children inside cards above overlay logic layers */
+.card > * {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+/* NASA-style card container mouse interaction properties */
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(103, 232, 249, 0.3);
+}
+
+.card:hover::before {
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.98) 20%, rgba(2, 6, 23, 0.6) 70%, rgba(2, 6, 23, 0.1) 100%);
+}
+
+/* ========================================================================== */
 
 .metric{font-size:48px;color:#67e8f9;font-weight:900}
 
-/* ==========================================================================
-   NEW: Image and Layout Additions for the 2 Services
-   ========================================================================== */
-
-/* Container for images to guarantee standard framing across different image sizes */
-.card-img-wrap {
-  width: 100%;
-  height: 220px;
-  margin-bottom: 20px;
-  overflow: hidden;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-/* Slick image scaling on card hover */
-.card-img-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.card:hover .card-img-wrap img {
-  transform: scale(1.05);
-}
-
 /* Typography styles for content inside the service cards */
 .card h3 {
-  font-size: 24px;
-  margin-bottom: 6px;
+  font-size: 26px;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  font-weight: 800;
 }
 
 .card h4 {
@@ -103,9 +119,29 @@ nav a{margin-left:24px}
 .card p {
   font-size: 15px;
   line-height: 1.6;
+  color: #cbd5e1;
 }
 
-/* Optional sub-branding block for mission tags */
+/* Interactive custom typography link indicator */
+.card-link {
+  font-size: 14px;
+  font-weight: 700;
+  color: #67e8f9;
+  display: inline-block;
+  margin-top: 15px;
+}
+
+/* Secondary lower heights for smaller layout components (like the 4 Divisions) */
+#divisions .card {
+  min-height: 220px;
+}
+#divisions .card h4 {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
 .badge-row {
   display: flex;
   gap: 12px;
@@ -113,11 +149,10 @@ nav a{margin-left:24px}
   margin-top: 15px;
 }
 
-/* ========================================================================== */
-
 @media(max-width:768px){
 nav{display:none}
 .hero h1{font-size:44px}
-/* Scales down service layout comfortably for smaller phone displays */
-.card-img-wrap { height: 180px; }
+.card { min-height: 320px; padding: 24px; }
+#divisions .card { min-height: 180px; }
 }
+

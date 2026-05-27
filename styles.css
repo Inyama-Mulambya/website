@@ -46,55 +46,68 @@ nav a{margin-left:24px}
 .two{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
 .four{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
 
-/* ==========================================================================
-   UPDATED: Integrated NASA Full-Card Media Layout
-   ========================================================================== */
+/* Global properties shared across all regular card elements */
 .card{
-  padding:32px;
+  padding:28px;
   border-radius:24px;
   background:#0f172a;
   border:1px solid rgba(255,255,255,.06);
   overflow: hidden; 
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Text sits at the base of the image block */
-  align-items: flex-start;
+  justify-content: space-between;
   position: relative;
-  min-height: 380px; /* Gives adequate frame space for visual elements */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.3s ease;
 }
 
-/* Optional variation modifier to prevent metrics layout blocks from overflowing */
 .center { text-align: center; justify-content: center; align-items: center; }
 
-/* The dark protective vignette gradient layer layered behind text copy */
-.card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(2, 6, 23, 0.95) 15%, rgba(2, 6, 23, 0.5) 65%, rgba(2, 6, 23, 0.1) 100%);
-  z-index: 1;
-  transition: opacity 0.3s ease;
-}
-
-/* Forces structural element children inside cards above overlay logic layers */
-.card > * {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-}
-
-/* NASA-style card container mouse interaction properties */
 .card:hover {
   transform: translateY(-4px);
   border-color: rgba(103, 232, 249, 0.3);
 }
 
-.card:hover::before {
-  background: linear-gradient(to top, rgba(2, 6, 23, 0.98) 20%, rgba(2, 6, 23, 0.6) 70%, rgba(2, 6, 23, 0.1) 100%);
+/* ==========================================================================
+   NEW: NASA Image-Sizing Rules (Only for Services & Divisions)
+   ========================================================================== */
+
+/* Triggers uncropped graphic frame parameters across the 2 Launch Frameworks */
+#services .card {
+  min-height: 280px; /* Perfectly scaled to fit landscape assets */
+  justify-content: flex-end; 
+  align-items: flex-start;
+  background-size: contain;
+  background-position: right center; /* Shifts asset to the right side of card */
+  background-repeat: no-repeat;
+}
+
+/* Triggers uncropped graphic frame parameters across the 4 Divisions grid */
+#divisions .card {
+  min-height: 180px;
+  justify-content: flex-end;
+  align-items: flex-start;
+  background-size: contain;
+  background-position: center bottom; /* Drops division visuals to the base */
+  background-repeat: no-repeat;
+}
+
+/* Protects text line readability inside media container blocks */
+#services .card::before,
+#divisions .card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Dark backdrop layer behind text elements to make white copy pop */
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.9) 30%, rgba(2, 6, 23, 0.3) 100%);
+  z-index: 1;
+}
+
+/* Raises textual strings over graphic assets layers */
+#services .card > *,
+#divisions .card > * {
+  position: relative;
+  z-index: 2;
+  width: 100%;
 }
 
 /* ========================================================================== */
@@ -110,10 +123,10 @@ nav a{margin-left:24px}
 }
 
 .card h4 {
-  color: #67e8f9;
-  font-size: 16px;
-  margin-bottom: 12px;
-  font-weight: 500;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
 }
 
 .card p {
@@ -131,17 +144,6 @@ nav a{margin-left:24px}
   margin-top: 15px;
 }
 
-/* Secondary lower heights for smaller layout components (like the 4 Divisions) */
-#divisions .card {
-  min-height: 220px;
-}
-#divisions .card h4 {
-  color: #fff;
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-}
-
 .badge-row {
   display: flex;
   gap: 12px;
@@ -152,7 +154,8 @@ nav a{margin-left:24px}
 @media(max-width:768px){
 nav{display:none}
 .hero h1{font-size:44px}
-.card { min-height: 320px; padding: 24px; }
-#divisions .card { min-height: 180px; }
+/* Reverts spatial rules safely for fluid stacking on mobile displays */
+#services .card { background-position: center bottom; min-height: 320px; }
+#divisions .card { min-height: 160px; }
 }
 

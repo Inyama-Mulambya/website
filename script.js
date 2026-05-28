@@ -6,26 +6,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const sensingSpecifyBlock = document.getElementById("sensingSpecifyBlock");
   const missionForm = document.getElementById("missionForm");
 
-  // 1. Dynamic Dropdown Switching Engine
+  // 1. Dynamic UI Viewport Visibility Handling
   if (serviceSelector && astronomyBlock && sensingBlock) {
     serviceSelector.addEventListener("change", (e) => {
       const selection = e.target.value;
       if (selection === "astronomy") {
         astronomyBlock.style.display = "flex";
         sensingBlock.style.display = "none";
-        setRequiredFields(astronomyBlock, true);
-        setRequiredFields(sensingBlock, false);
       } else if (selection === "remotesensing") {
         astronomyBlock.style.display = "none";
         sensingBlock.style.display = "flex";
-        setRequiredFields(astronomyBlock, false);
-        setRequiredFields(sensingBlock, true);
         if (sensingDomain) triggerSensingSpecifyToggle();
       }
     });
   }
 
-  // 2. Inner Specific Toggle for Remote Sensing Options
   if (sensingDomain && sensingSpecifyBlock) {
     sensingDomain.addEventListener("change", triggerSensingSpecifyToggle);
   }
@@ -33,65 +28,61 @@ document.addEventListener("DOMContentLoaded", () => {
   function triggerSensingSpecifyToggle() {
     if (sensingDomain.value === "other") {
       sensingSpecifyBlock.style.display = "block";
-      const input = sensingSpecifyBlock.querySelector("input");
-      if (input) input.setAttribute("required", "true");
     } else {
       sensingSpecifyBlock.style.display = "none";
-      const input = sensingSpecifyBlock.querySelector("input");
-      if (input) input.removeAttribute("required");
     }
   }
 
-  // 3. Form Validation Helper
-  function setRequiredFields(parentBlock, isRequired) {
-    const inputs = parentBlock.querySelectorAll("input, select");
-    inputs.forEach(el => {
-      if (isRequired) {
-        el.setAttribute("required", "true");
-      } else {
-        el.removeAttribute("required");
-      }
-    });
-  }
-
-  // 4. FIXED: Formspree AJAX Submit Engine (Prevents "Method Unsupported" Errors)
+  // 2. FIXED payload routing + clean custom messaging
   if (missionForm) {
     missionForm.addEventListener("submit", async (event) => {
-      event.preventDefault(); // Stop standard browser handling
+      event.preventDefault(); // Halt default multi-stream tracking
       
       const submitButton = missionForm.querySelector("button[type='submit']");
       const originalText = submitButton.textContent;
-      submitButton.textContent = "Transmitting Flight Plan...";
+      submitButton.textContent = "Transmitting...";
       submitButton.disabled = true;
 
-      const formData = new FormData(missionForm);
+      // Create a clean data builder snapshot
+      const payloadData = new FormData();
+      
+      // Always append global primary data rows
+      payloadData.append("_replyto", missionForm.querySelector("input[name='_replyto']").value);
+      payloadData.append("core_service", serviceSelector.value);
+      payloadData.append("target_mission_date", missionForm.querySelector("input[name='target_mission_date']").value);
+
+      // CONDITIONAL EXTRACTION ENGINE: Only pull data from the active visual block
+      if (serviceSelector.value === "astronomy") {
+        payloadData.append("astro_focus", astronomyBlock.querySelector("select[name='astro_focus']").value);
+        payloadData.append("astro_type", astronomyBlock.querySelector("select[name='astro_type']").value);
+      } else if (serviceSelector.value === "remotesensing") {
+        payloadData.append("sensing_domain", sensingBlock.querySelector("select[name='sensing_domain']").value);
+        payloadData.append("sensing_route", sensingBlock.querySelector("select[name='sensing_route']").value);
+        
+        if (sensingDomain.value === "other") {
+          payloadData.append("sensing_specify", sensingBlock.querySelector("input[name='sensing_specify']").value);
+        }
+      }
 
       try {
         const response = await fetch(missionForm.action, {
-          method: "POST", // Absolutely guarantees POST is utilized
-          body: formData,
-          headers: {
-            'Accept': 'application/json'
-          }
+          method: "POST",
+          body: payloadData, // Dispatches the cleanly separated layout fields only
+          headers: { 'Accept': 'application/json' }
         });
 
         if (response.ok) {
-          alert("Flight Plan Committed Successfully! Ground Control has logged your coordinates.");
+          // Your explicit message format update
+          alert("Your booking was successful! We will contact you shortly. Thank you.");
           missionForm.reset();
-          // Reset block viewports to hidden initial state
           if (astronomyBlock) astronomyBlock.style.display = "none";
           if (sensingBlock) sensingBlock.style.display = "none";
           if (sensingSpecifyBlock) sensingSpecifyBlock.style.display = "none";
         } else {
-          const data = await response.json();
-          if (data.errors) {
-            alert("Submission error: " + data.errors.map(error => error.message).join(", "));
-          } else {
-            alert("Transmission rejected by gateway. Please verify your Formspree ID.");
-          }
+          alert("Transmission error. Please check your data variables.");
         }
       } catch (error) {
-        alert("Network timeout. Communication link failure with Formspree servers.");
+        alert("Network error. Unable to establish contact with backend telemetry lines.");
       } finally {
         submitButton.textContent = originalText;
         submitButton.disabled = false;

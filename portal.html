@@ -49,30 +49,34 @@
         </p>
       </div>
       
-      <!-- ADD YOUR FORMSPREE ENDPOINT LINK IN THE ACTION ATTRIBUTE BELOW -->
-      <form id="missionForm" action="https://formspree.io" method="POST" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+      <!-- PASTE YOUR FORMSPREE ENDPOINT LINK IN THE ACTION ATTRIBUTE BELOW -->
+      <form action="https://formspree.io" method="POST" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
         
-        <!-- NEW FIELD: Email Address for Reply Communications -->
+        <!-- Field 1: Email Address -->
         <div>
           <label class="form-label">Contact Email Address</label>
-          <input type="email" name="client_email" class="form-input" placeholder="name@domain.com" required>
+          <input type="email" name="_replyto" class="form-input" placeholder="name@domain.com" required>
         </div>
         
-        <!-- Step 1: Base Core Framework Selection -->
+        <!-- Field 2: Base Core Framework Selection -->
         <div>
-          <label class="form-label">1. Core Service Framework</label>
-          <select id="serviceSelector" name="core_service" class="form-input" required>
+          <label class="form-label">Core Service Framework</label>
+          <select name="core_service" class="form-input" required>
             <option value="" disabled selected style="background:#0f172a;">Choose Service Track...</option>
             <option value="astronomy" style="background:#0f172a;">Community Astronomy Outreach</option>
             <option value="remotesensing" style="background:#0f172a;">Remote Sensing Intelligence</option>
           </select>
         </div>
 
-        <!-- DEPENDENT TRACK A: ASTRONOMY FIELDS -->
-        <div id="astronomyBlock" style="display: none; flex-direction: column; gap: 20px;">
+        <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 5px 0;"></div>
+
+        <!-- TRACK A: ASTRONOMY OPTIONS (Permanently Visible) -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <span class="tag" style="font-size: 10px; color:#67e8f9; letter-spacing: 2px;">FOR ASTRONOMY TRACKS:</span>
           <div>
             <label class="form-label">Astronomy Focus Model</label>
             <select class="form-input" name="astro_focus">
+              <option value="n_a" style="background:#0f172a;">Not Applicable (Choosing Remote Sensing)</option>
               <option value="day" style="background:#0f172a;">Daytime Event (Solar Observations / Workshops)</option>
               <option value="night" style="background:#0f172a;">Nighttime Event (Immersive Stargazing Operations)</option>
             </select>
@@ -80,42 +84,48 @@
           <div>
             <label class="form-label">Engagement Classification</label>
             <select class="form-input" name="astro_type">
+              <option value="n_a" style="background:#0f172a;">Not Applicable</option>
               <option value="school" style="background:#0f172a;">Educational Institution / School</option>
               <option value="corporate" style="background:#0f172a;">Corporate Team Building Retreat</option>
               <option value="family" style="background:#0f172a;">Private Group / Family Gathering</option>
               <option value="nonprofit" style="background:#0f172a;">Non-Profit / NGO (Church, Orphanage)</option>
             </select>
           </div>
-          <div>
-            <label class="form-label">Target Window Date</label>
-            <input type="date" class="form-input" name="astro_date" style="color-scheme: dark;">
-          </div>
         </div>
 
-        <!-- DEPENDENT TRACK B: REMOTE SENSING FIELDS -->
-        <div id="sensingBlock" style="display: none; flex-direction: column; gap: 20px;">
+        <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 5px 0;"></div>
+
+        <!-- TRACK B: REMOTE SENSING OPTIONS (Permanently Visible) -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <span class="tag" style="font-size: 10px; color:#67e8f9; letter-spacing: 2px;">FOR REMOTE SENSING TRACKS:</span>
           <div>
             <label class="form-label">Asset Domain Monitoring</label>
-            <select id="sensingDomain" class="form-input" name="sensing_domain">
+            <select class="form-input" name="sensing_domain">
+              <option value="n_a" style="background:#0f172a;">Not Applicable (Choosing Astronomy)</option>
               <option value="farming" style="background:#0f172a;">Precision Agriculture Tracking</option>
               <option value="other" style="background:#0f172a;">Other Spatial Analytics (Specify Below)</option>
             </select>
           </div>
-          <div id="sensingSpecifyBlock" style="display: none;">
-            <label class="form-label">Specify Target Domain Requirements</label>
-            <input type="text" class="form-input" name="sensing_specify" placeholder="e.g. Civil Infrastructure or Mining Volumetrics">
+          <div>
+            <label class="form-label">Specify Domain Details (If "Other")</label>
+            <input type="text" class="form-input" name="sensing_specify" placeholder="e.g. Civil Infrastructure or Mining">
           </div>
           <div>
             <label class="form-label">Operational Delivery Route</label>
             <select class="form-input" name="sensing_route">
+              <option value="n_a" style="background:#0f172a;">Not Applicable</option>
               <option value="consultation" style="background:#0f172a;">Technical Pipeline Consultation Session</option>
               <option value="dashboard" style="background:#0f172a;">Custom Telemetry Dashboard Provisioning</option>
             </select>
           </div>
-          <div>
-            <label class="form-label">Desired Deployment Launch Date</label>
-            <input type="date" class="form-input" name="sensing_date" style="color-scheme: dark;">
-          </div>
+        </div>
+
+        <div style="height: 1px; background: rgba(255,255,255,0.05); margin: 5px 0;"></div>
+
+        <!-- Field 3: Target Date Calendar picker -->
+        <div>
+          <label class="form-label">Requested Mission Execution Date</label>
+          <input type="date" class="form-input" name="target_mission_date" style="color-scheme: dark;" required>
         </div>
 
         <button type="submit" class="btn" style="width:100%; border:none; cursor:pointer; justify-content:center;">Commit Flight Plan</button>
@@ -173,13 +183,3 @@
 <section class="section" style="padding-top: 0;">
   <div class="card" style="flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 40px; background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
     <div style="max-width: 550px;">
-      <span class="tag" style="font-size: 11px; letter-spacing: 2px;">COMMUNICATIONS HUB</span>
-      <h3 style="font-size: 28px; margin: 5px 0 8px; font-weight: 800;">Dedicated Ground Support</h3>
-      <p class="muted" style="font-size: 15px;">Need immediate engineering overrides or custom target modifications for upcoming satellite passes? Get directly in touch with our ground station team.</p>
-    </div>
-    <div>
-      <a href="mailto:hello@stari.space" class="btn" style="margin-top: 0; padding: 14px 35px; box-shadow: 0 0 15px rgba(103, 232, 249, 0.3);">hello@stari.space</a>
-    </div>
-  </div>
-</section>
-

@@ -50,7 +50,13 @@
       </div>
       
       <!-- ADD YOUR FORMSPREE ENDPOINT LINK IN THE ACTION ATTRIBUTE BELOW -->
-      <form id="missionForm" action="https://formspree.io/f/mkoekpqo" method="POST" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+      <form id="missionForm" action="https://formspree.io" method="POST" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+        
+        <!-- NEW FIELD: Email Address for Reply Communications -->
+        <div>
+          <label class="form-label">Contact Email Address</label>
+          <input type="email" name="client_email" class="form-input" placeholder="name@domain.com" required>
+        </div>
         
         <!-- Step 1: Base Core Framework Selection -->
         <div>
@@ -177,6 +183,3 @@
   </div>
 </section>
 
-<script src="script.js"></script>
-</body>
-</html>

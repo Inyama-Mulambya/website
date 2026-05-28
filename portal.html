@@ -13,7 +13,7 @@
 
 <header>
   <div class="logo">
-    <a href="index.html"><img src="https://i.imgur.com/R3OBLXe.png" alt="STARi Logo"></a>
+    <a href="index.html"><img src="https://imgur.com" alt="STARi Logo"></a>
   </div>
   <nav>
     <a href="index.html">Home</a>
@@ -37,7 +37,7 @@
 
 <!-- DASHBOARD GRID -->
 <section class="section" style="padding-top: 20px;">
-  <div class="grid two" style="grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 30px; align-items: start;">
+  <div class="grid two" style="grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; align-items: start;">
     
     <!-- Module 1: Interactive Multi-Option Booking Interface -->
     <div class="card" style="justify-content: flex-start; gap: 15px; padding: 35px;">
@@ -49,13 +49,13 @@
         </p>
       </div>
       
-      <!-- DYNAMIC FORM CONTAINER -->
-      <form id="missionForm" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
+      <!-- ADD YOUR FORMSPREE ENDPOINT LINK IN THE ACTION ATTRIBUTE BELOW -->
+      <form id="missionForm" action="https://formspree.io/f/mkoekpqo" method="POST" style="display: flex; flex-direction: column; gap: 20px; width: 100%;">
         
         <!-- Step 1: Base Core Framework Selection -->
         <div>
           <label class="form-label">1. Core Service Framework</label>
-          <select id="serviceSelector" class="form-input" required>
+          <select id="serviceSelector" name="core_service" class="form-input" required>
             <option value="" disabled selected style="background:#0f172a;">Choose Service Track...</option>
             <option value="astronomy" style="background:#0f172a;">Community Astronomy Outreach</option>
             <option value="remotesensing" style="background:#0f172a;">Remote Sensing Intelligence</option>

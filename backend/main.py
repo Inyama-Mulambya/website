@@ -1,0 +1,81 @@
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+import ee
+import json
+
+app = FastAPI()
+
+# Automatically handles all browser security permissions
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.post("/process_ndvi_engine")
+async def process_ndvi_engine(request: Request):
+    try:
+        # 1. Parse coordinate geometry inputs from the website portal
+        request_json = await request.json()
+        if not request_json or 'coordinates' not in request_json:
+            return {"error": "Missing farm coordinates geometry boundary inputs."}, 400
+        
+        coords = request_json['coordinates']
+
+        # 2. Initialize Google Earth Engine
+        # NOTE: GEE needs a service account key to initialize on a server automatically
+        ee.Initialize()
+
+        # 3. Construct the tracking geometry polygon from user input
+        geometry = ee.Geometry.Polygon(coords)
+
+        # 4. User inputs matching your exact GEE pipeline variables
+        start_date = '2026-01-01'
+        end_date = '2026-01-31'
+        max_cloud = 40
+
+        # 5. Cloud mask engine logic function
+        def mask_s2(image):
+            scl = image.select('SCL')
+            mask = scl.neq(3).and_(scl.neq(8)).and_(scl.neq(9)).and_(scl.neq(10))
+            return image.updateMask(mask)
+
+        # 6. NDVI function (B8 = NIR, B4 = Red)
+        def add_ndvi(image):
+            ndvi = image.normalizedDifference(['B8', 'B4']).rename('NDVI')
+            return image.addBands(ndvi)
+
+        # 7. Run processing core layers query pipelines
+        collection = (ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED')
+                      .filterBounds(geometry)
+                      .filterDate(start_date, end_date)
+                      .filter(ee.Filter.lt('CLOUDY_PIXEL_PERCENTAGE', max_cloud))
+                      .map(mask_s2)
+                      .map(add_ndvi))
+
+        # 8. Create Median NDVI Composite and clip it to the farm geometry
+        composite = collection.select('NDVI').median().clip(geometry)
+
+        # 9. Visualization parameters matching your green/yellow/red palette
+        vis_params = {
+            'min': 0.2,
+            'max': 0.8,
+            'palette': ['red', 'yellow', 'green']
+        }
+        
+        # 10. Generate an active public web view token tile link parameter map
+        map_id_dict = ee.data.getMapId({
+            'image': composite,
+            'visParams': vis_params
+        })
+
+        # Return the secure tile map URL back to your website portal dashboard
+        return {
+            "status": "success",
+            "map_url": map_id_dict['tile_fetcher'].url_format
+        }
+
+    except Exception as e:
+        return {"error": str(e)}, 500

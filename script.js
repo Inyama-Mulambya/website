@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 3. MISSION BOOKING FORM SUBMISSION ENGINE (Clean Data Separation)
+  // 3. MISSION BOOKING FORM SUBMISSION ENGINE (Clean Data Separation via Formspree)
   if (missionForm) {
     missionForm.addEventListener("submit", async (event) => {
       event.preventDefault(); // Lock default multi-stream tracking
@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 4. FREE CROP HEALTH SCAN COMMAND PANEL SUBMISSION ENGINE
+  // 4. FIXED AUTOMATED BACKEND: FREE CROP HEALTH SCAN PANEL SUBMISSION ENGINE
   if (freeScanForm) {
     freeScanForm.addEventListener("submit", async (event) => {
       event.preventDefault(); // Lock default tracking vectors
@@ -97,20 +97,55 @@ document.addEventListener("DOMContentLoaded", () => {
       scanButton.textContent = "Processing Core Request...";
       scanButton.disabled = true;
 
-      const scanData = new FormData(freeScanForm);
+      // EXTRACT RAW COORDINATE GEOMETRY STRING INPUTS (e.g., [[28.3,-14.9],[28.4,-14.9]...])
+      const gpsValue = freeScanForm.querySelector("input[name='gps_coordinates']").value;
+      
+      let coordinateData;
+      try {
+        coordinateData = JSON.parse(gpsValue);
+      } catch(e) {
+        alert("Invalid geometry matrix structure. Please enter a valid JSON coordinate array for backend processing.");
+        scanButton.textContent = originalBtnText;
+        scanButton.disabled = false;
+        return;
+      }
+
+      // Format payload payload to map backend request structures perfectly
+      const backendPayload = {
+        coordinates: coordinateData
+      };
+
+      // ====================================================================
+      // 📍 REPLACE THIS LINK VALUE WITH YOUR ACTUAL DEPLOYED RENDER LINK ENGINE
+      // ====================================================================
+      const BACKEND_URL = "https://stari-ndvi-engine.onrender.com";
+      // ====================================================================
 
       try {
-        const response = await fetch(freeScanForm.action, {
+        const response = await fetch(BACKEND_URL, {
           method: "POST",
-          body: scanData,
-          headers: { 'Accept': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(backendPayload)
         });
 
         if (response.ok) {
-          alert("Scan array initialized! Our satellite data pipelines are analyzing your vectors. Your free crop health report will be transmitted to your email within 24 hours.");
+          const data = await response.json();
+          alert("Scan array initialized! Satellite vectors successfully parsed.");
+          
+          // DYNAMIC VISUAL INJECTION: Render maps directly on user dashboard
+          const dashboardPanel = document.querySelector(".portal-progress-bar").parentElement.parentElement;
+          dashboardPanel.innerHTML = `
+            <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #67e8f9;">LIVE TELEMETRY VIEW</span>
+            <h2 style="font-size: 22px; margin: 5px 0 10px; font-weight: 800;">Your Crop Stress Map</h2>
+            <div style="width:100%; height:250px; background:#020617; border-radius:12px; overflow:hidden; border:1px solid #67e8f9; position:relative;">
+              <iframe src="${data.map_url.replace('{x}', '0').replace('{y}', '0').replace('{z}', '0')}" style="width:100%; height:100%; border:none;"></iframe>
+            </div>
+            <span class="tag" style="font-size: 10px; color:#94a3b8; display:block; text-align:center; margin-top:8px;">🟢 GREEN = HEALTHY • 🟡 YELLOW = STRESS • 🔴 RED = CRITICAL</span>
+          `;
+
           freeScanForm.reset();
         } else {
-          alert("Telemetry rejection. Please verify coordinate inputs.");
+          alert("Telemetry verification rejection. Ensure vector bounds are inside mapped parameters.");
         }
       } catch (error) {
         alert("Connection timed out. Check your link connection state with the satellite gates.");
@@ -121,4 +156,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-

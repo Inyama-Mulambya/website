@@ -1,12 +1,14 @@
-<link rel="stylesheet" href="https://unpkg.com" />
-<script src="https://unpkg.com"></script>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Client Portal | STARi</title>
+  
+  <!-- FIXED: Complete Open-Source Leaflet Mapping Engine CDN Connections -->
+  <link rel="stylesheet" href="https://unpkg.com" />
+  <script src="https://unpkg.com"></script>
+  
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -116,7 +118,7 @@
       </form>
     </div>
 
-    <!-- Module 2: UPDATED DATA TELEMETRY DASHBOARD + LIVE SCAN TERMINAL -->
+    <!-- Module 2: DATA TELEMETRY DASHBOARD + LIVE SCAN TERMINAL -->
     <div class="card" style="justify-content: flex-start; gap: 20px; padding: 35px; border-color: rgba(103, 232, 249, 0.15);">
       <div>
         <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #67e8f9;">ANALYTICS ENGINE</span>
@@ -145,12 +147,11 @@
         </div>
       </div>
 
-      <!-- NEW INTEGRATION: Free Rapid Crop Health Scan Input Fields -->
+      <!-- INTEGRATED MAP RADAR: Free Rapid Crop Health Scan Panel -->
       <div style="width: 100%; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px;">
         <span class="tag" style="font-size: 10px; color:#67e8f9; letter-spacing: 1px; display: block; margin-bottom: 12px;">ACTIVE COMMAND: INITIALIZE FREE CROP SCAN</span>
         
-        <!-- PASTE YOUR SECOND FORMSPREE ID VALUE OR KEEP THE BOOKING ID TO COMBINE LOGS -->
-        <form id="freeScanForm" action="https://formspree.io" method="POST" style="display: flex; flex-direction: column; gap: 14px;">
+        <form id="freeScanForm" action="https://formspree.io/f/mkoekpqo" method="POST" style="display: flex; flex-direction: column; gap: 14px;">
           <input type="hidden" name="form_type" value="Free Crop Scan Request">
           
           <div>
@@ -169,28 +170,13 @@
             </div>
           </div>
 
-<!-- location selector: elegant map interface block -->
-<div>
-  <label class="form-label">Pinpoint Your Farm Location</label>
-  <p class="muted" style="font-size:12px; margin-bottom:8px;">Zoom into your region and click the corners of your farm to mark the target zone.</p>
-  
-  <!-- This is the container where your interactive farm map will render -->
-  <div id="portalMap" style="width: 100%; height: 250px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: #0f172a; margin-bottom: 15px;"></div>
-  
-  <!-- This hidden input field will automatically hold the coordinate data for your form submission -->
-  <input type="hidden" id="geoCoordinates" name="gps_coordinates" required>
-</div>
+          <!-- FIXED: Embedded Map Interface Box replaces old manual entry arrays -->
+          <div>
+            <label class="form-label" style="font-size: 11px;">Pinpoint Your Farm Boundary Bounds</label>
+            <p class="muted" style="font-size:12px; margin-bottom:8px; line-height:1.4;">Zoom into your agricultural sector and click points along the corners of your fields to build the data loop.</p>
+            <div id="portalMap" style="width: 100%; height: 250px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: #020617; margin-bottom: 5px; z-index:10;"></div>
+            
+            <!-- Hidden tracker input passing your geoJSON boundary matrix to script workflows -->
+            <input type="hidden" id="geoCoordinates" name="gps_coordinates" required>
+          </div>
 
-
-          <button type="submit" class="btn" style="width:100%; margin-top: 5px; padding: 12px; font-size:14px; border:none; cursor:pointer; justify-content:center; box-shadow: 0 0 15px rgba(103, 232, 249, 0.15);">Initialize Scan Array</button>
-        </form>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- SECURE HELP DESK LAYER -->
-<section class="section" style="padding-top: 0;">
-  <div class="card" style="flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 40px; background: linear-gradient(135deg, #0f172a 0%, #020617 100%);">
-    <div style="max-width: 550px;">

@@ -1,3 +1,6 @@
+<link rel="stylesheet" href="https://unpkg.com" />
+<script src="https://unpkg.com"></script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -166,10 +169,18 @@
             </div>
           </div>
 
-          <div>
-            <label class="form-label" style="font-size: 11px;">GPS Coordinates or Land Boundary Bounds</label>
-            <input type="text" name="gps_coordinates" class="form-input" style="padding: 10px 14px; font-size: 14px;" placeholder="e.g., -14.982, 28.321 or KML Link" required>
-          </div>
+<!-- location selector: elegant map interface block -->
+<div>
+  <label class="form-label">Pinpoint Your Farm Location</label>
+  <p class="muted" style="font-size:12px; margin-bottom:8px;">Zoom into your region and click the corners of your farm to mark the target zone.</p>
+  
+  <!-- This is the container where your interactive farm map will render -->
+  <div id="portalMap" style="width: 100%; height: 250px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: #0f172a; margin-bottom: 15px;"></div>
+  
+  <!-- This hidden input field will automatically hold the coordinate data for your form submission -->
+  <input type="hidden" id="geoCoordinates" name="gps_coordinates" required>
+</div>
+
 
           <button type="submit" class="btn" style="width:100%; margin-top: 5px; padding: 12px; font-size:14px; border:none; cursor:pointer; justify-content:center; box-shadow: 0 0 15px rgba(103, 232, 249, 0.15);">Initialize Scan Array</button>
         </form>

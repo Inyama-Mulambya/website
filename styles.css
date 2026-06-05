@@ -186,3 +186,31 @@ nav{display:none}
 #services .card { min-height: 300px; }
 #divisions .card { min-height: 170px; }
 }
+
+/* ==========================================================================
+   Leaflet Interactive Map Container Layout Fix
+   ========================================================================== */
+#portalMap {
+  width: 100% !important;
+  height: 250px !important;
+  display: block !important;
+  position: relative;
+  z-index: 10; /* Ensures map elements sit over the background particle grid */
+}
+
+/* Fixes default Leaflet tile image loading transitions */
+.leaflet-container {
+  background: #020617 !important; /* Matches your dark space background */
+  outline: 0;
+}
+
+/* Adjusts Leaflet's zoom buttons to match the sleek STARi layout design */
+.leaflet-bar a {
+  background-color: #0f172a !important;
+  color: #67e8f9 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+.leaflet-bar a:hover {
+  background-color: #1e293b !important;
+}
+

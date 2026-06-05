@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
       submitButton.textContent = "Transmitting...";
       submitButton.disabled = true;
 
-      // Extract and separate fields based on choice
       const payloadData = new FormData();
       payloadData.append("_replyto", missionForm.querySelector("input[name='_replyto']").value);
       payloadData.append("core_service", serviceSelector.value);
@@ -87,39 +86,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 4. FIXED AUTOMATED BACKEND: FREE CROP HEALTH SCAN PANEL SUBMISSION ENGINE
+  // 4. AUTOMATED BACKEND: FREE CROP HEALTH SCAN PANEL SUBMISSION ENGINE
   if (freeScanForm) {
     freeScanForm.addEventListener("submit", async (event) => {
-      event.preventDefault(); // Lock default tracking vectors
+      event.preventDefault(); 
       
       const scanButton = freeScanForm.querySelector("button[type='submit']");
       const originalBtnText = scanButton.textContent;
       scanButton.textContent = "Processing Core Request...";
       scanButton.disabled = true;
 
-      // EXTRACT RAW COORDINATE GEOMETRY STRING INPUTS (e.g., [[28.3,-14.9],[28.4,-14.9]...])
-      const gpsValue = freeScanForm.querySelector("input[name='gps_coordinates']").value;
+      const gpsValue = document.getElementById('geoCoordinates').value;
       
-      let coordinateData;
-      try {
-        coordinateData = JSON.parse(gpsValue);
-      } catch(e) {
-        alert("Invalid geometry matrix structure. Please enter a valid JSON coordinate array for backend processing.");
+      if (!gpsValue) {
+        alert("Please mark your farm boundaries on the terminal map before initializing scan arrays.");
         scanButton.textContent = originalBtnText;
         scanButton.disabled = false;
         return;
       }
 
-      // Format payload payload to map backend request structures perfectly
       const backendPayload = {
-        coordinates: coordinateData
+        coordinates: JSON.parse(gpsValue)
       };
 
-      // ====================================================================
-      // 📍 REPLACE THIS LINK VALUE WITH YOUR ACTUAL DEPLOYED RENDER LINK ENGINE
-      // ====================================================================
-      const BACKEND_URL = "https://stari-ndvi-engine.onrender.com";
-      // ====================================================================
+      const BACKEND_URL = "https://onrender.com";
 
       try {
         const response = await fetch(BACKEND_URL, {
@@ -132,7 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const data = await response.json();
           alert("Scan array initialized! Satellite vectors successfully parsed.");
           
-          // DYNAMIC VISUAL INJECTION: Render maps directly on user dashboard
           const dashboardPanel = document.querySelector(".portal-progress-bar").parentElement.parentElement;
           dashboardPanel.innerHTML = `
             <span class="tag" style="font-size: 11px; letter-spacing: 2px; color: #67e8f9;">LIVE TELEMETRY VIEW</span>
@@ -144,6 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
           `;
 
           freeScanForm.reset();
+          // Reset internal script map elements
+          if (typeof resetPortalMap === "function") resetPortalMap();
         } else {
           alert("Telemetry verification rejection. Ensure vector bounds are inside mapped parameters.");
         }
@@ -154,5 +145,59 @@ document.addEventListener("DOMContentLoaded", () => {
         scanButton.disabled = false;
       }
     });
+  }
+
+  // ==========================================================================
+  // APPENDED HERE: INTERACTIVE LEAFLET FARM MAP COMPONENT SYSTEM
+  // ==========================================================================
+  const mapElement = document.getElementById('portalMap');
+  if (mapElement) {
+    // Centers tracking lens map viewport frame explicitly over Lusaka, Zambia coordinates
+    const map = L.map('portalMap').setView([-15.4167, 28.2833], 10);
+
+    // Loads sharp default map graphics engine panels from open source layout repositories
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    let pointMarkers = [];
+    let farmPolygon = null;
+    const hiddenCoordsInput = document.getElementById('geoCoordinates');
+
+    // Listens for mouse or touch interaction click inputs on map box framework surface
+    map.on('click', (e) => {
+      const lat = parseFloat(e.latlng.lat.toFixed(5));
+      const lng = parseFloat(e.latlng.lng.toFixed(5));
+
+      // Drops structural vector blue accent circular node point indicators on site layout
+      const marker = L.circleMarker([lat, lng], { radius: 5, color: '#67e8f9', fillColor: '#020617', fillOpacity: 1 }).addTo(map);
+      pointMarkers.push(marker);
+
+      if (farmPolygon) map.removeLayer(farmPolygon);
+
+      // Reformat map point markers to fit our backend script matrix expectation strings
+      const coordArray = pointMarkers.map(m => [m.getLatLng().lng, m.getLatLng().lat]);
+      
+      if (coordArray.length >= 3) {
+        // Automatically adds the closing boundary loop point matching entry index 0
+        const closedLoop = [...coordArray, coordArray[0]];
+        
+        // Draws a shaded blue tracking frame highlight covering their fields bounds live
+        farmPolygon = L.polygon(closedLoop.map(p => [p[1], p[0]]), { color: '#67e8f9', weight: 2, fillOpacity: 0.2 }).addTo(map);
+        
+        // Serializes data into hidden layout input string tags seamlessly
+        hiddenCoordsInput.value = JSON.stringify(closedLoop);
+      }
+    });
+
+    // Reset helper to clear visual maps layers if transactions complete successfully
+    window.resetPortalMap = function() {
+      pointMarkers.forEach(m => map.removeLayer(m));
+      if (farmPolygon) map.removeLayer(farmPolygon);
+      pointMarkers = [];
+      farmPolygon = null;
+      if (hiddenCoordsInput) hiddenCoordsInput.value = "";
+    };
   }
 });

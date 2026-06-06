@@ -4,11 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Client Portal | STARi</title>
-  
-  <!-- FIXED: Complete Open-Source Leaflet Mapping Engine CDN Connections -->
-  <link rel="stylesheet" href="https://unpkg.com" />
-  <script src="https://unpkg.com"></script>
-  
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -170,13 +165,17 @@
             </div>
           </div>
 
-          <!-- FIXED: Embedded Map Interface Box replaces old manual entry arrays -->
+          <!-- Google Satellite Frame Embed -->
           <div>
             <label class="form-label" style="font-size: 11px;">Pinpoint Your Farm Boundary Bounds</label>
-            <p class="muted" style="font-size:12px; margin-bottom:8px; line-height:1.4;">Zoom into your agricultural sector and click points along the corners of your fields to build the data loop.</p>
-            <div id="portalMap" style="width: 100%; height: 250px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); background: #020617; margin-bottom: 5px; z-index:10;"></div>
-            
-            <!-- Hidden tracker input passing your geoJSON boundary matrix to script workflows -->
-            <input type="hidden" id="geoCoordinates" name="gps_coordinates" required>
-          </div>
+            <p class="muted" style="font-size:12px; margin-bottom:12px; line-height:1.4;">Zoom into your agricultural sector, locate your fields, and copy/paste your coordinates into the vector box below.</p>
+            <div style="width: 100%; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); background: #020617; margin-bottom: 12px; height: 260px;">
+              <iframe 
+                src="https://google.com" 
+                width="100%" 
+                height="100%" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+
 

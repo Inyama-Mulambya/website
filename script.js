@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         coordinates: gpsValue
       };
 
-      const BACKEND_URL = "https://onrender.com";
+      const BACKEND_URL = "https://stari-ndvi-engine.onrender.com";
 
       try {
         const response = await fetch(BACKEND_URL, {

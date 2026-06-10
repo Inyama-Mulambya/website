@@ -178,3 +178,94 @@
               <input type="text" name="vertex4_lng" class="form-input" placeholder="V4 Lng" style="font-size: 12px; padding: 10px;" required>
             </div>
           </div>
+
+                  </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SCRIPTS FOR INTERACTIVE DOM TOGGLES AND BACKEND API PIPELINE -->
+<script>
+  // --- Module 1 Form UI Toggle Logic ---
+  const serviceSelector = document.getElementById('serviceSelector');
+  const astronomyBlock = document.getElementById('astronomyBlock');
+  const sensingBlock = document.getElementById('sensingBlock');
+  const sensingDomain = document.getElementById('sensingDomain');
+  const sensingSpecifyBlock = document.getElementById('sensingSpecifyBlock');
+
+  if (serviceSelector) {
+    serviceSelector.addEventListener('change', function() {
+      if (this.value === 'astronomy') {
+        astronomyBlock.style.display = 'flex';
+        sensingBlock.style.display = 'none';
+      } else if (this.value === 'remotesensing') {
+        astronomyBlock.style.display = 'none';
+        sensingBlock.style.display = 'flex';
+      } else {
+        astronomyBlock.style.display = 'none';
+        sensingBlock.style.display = 'none';
+      }
+    });
+  }
+
+  if (sensingDomain) {
+    sensingDomain.addEventListener('change', function() {
+      if (this.value === 'other') {
+        sensingSpecifyBlock.style.display = 'block';
+      } else {
+        sensingSpecifyBlock.style.display = 'none';
+      }
+    });
+  }
+
+  // --- Python Backend Integration Code ---
+  document.getElementById('freeScanForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Stop standard form refresh/redirect
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = "Processing Vectors...";
+    submitBtn.disabled = true;
+
+    try {
+      // Build the geometric 3D Polygon array required by Google Earth Engine [[[Lng, Lat], ...]]
+      const data = {
+        coordinates: [[
+          [parseFloat(document.getElementById('vertex1_lng').value), parseFloat(document.getElementById('vertex1_lat').value)],
+          [parseFloat(document.getElementById('vertex2_lng').value), parseFloat(document.getElementById('vertex2_lat').value)],
+          [parseFloat(document.getElementById('vertex3_lng').value), parseFloat(document.getElementById('vertex3_lat').value)],
+          [parseFloat(document.getElementById('vertex4_lng').value), parseFloat(document.getElementById('vertex4_lat').value)],
+          [parseFloat(document.getElementById('vertex1_lng').value), parseFloat(document.getElementById('vertex1_lat').value)] // Close the ring loop
+        ]]
+      };
+
+      // Send payload to your FastAPI Backend (Change the URL once deployed to production)
+      const response = await fetch('https://your-backend-url.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        alert("Success! Satellite tile generated. Check browser console.");
+        console.log("Processed Tile URL Map Link:", result.map_url);
+      } else {
+        alert("Engine Error: " + (result.error || "Failed to process data."));
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Could not connect to the remote sensing core backend.");
+    } finally {
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
+

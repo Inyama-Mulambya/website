@@ -32,7 +32,7 @@ def secure_cloud_authentication():
         scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
         
         # Initialize library with service credentials and cloud project context
-        ee.Initialize(scoped_credentials, project=key_info.get("project_id"))
+        ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:
         print(f"Critical error initializing Earth Engine background pipeline: {e}")

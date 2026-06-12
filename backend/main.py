@@ -29,7 +29,7 @@ def secure_cloud_authentication():
         credentials = service_account.Credentials.from_service_account_info(key_info)
         
         # Scopes array setup
-        scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
+        scoped_credentials = credentials.with_scopes(['https://googleapis.com/auth/earthengine'])
         
         # Initialize direct tracking configuration
         ee.Initialize(scoped_credentials, project='stari-remote-intelligence')

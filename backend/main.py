@@ -20,18 +20,18 @@ app.add_middleware(
 def secure_cloud_authentication():
     """Headless initialization for Google Earth Engine using a Service Account Key."""
     try:
-        # Pull down the key string from your server environment variables
         key_env_var = os.environ.get("EE_SERVICE_ACCOUNT_KEY")
         if not key_env_var:
-            print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected. GEE will fail to load.")
+            print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected.")
             return
 
-        # Parse string contents to structured service account tokens
         key_info = json.loads(key_env_var)
         credentials = service_account.Credentials.from_service_account_info(key_info)
-        scoped_credentials = credentials.with_scopes(['https://googleapis.com/auth/earthengine'])
         
-        # --- THIS ENTIRE LINE HAS TO BE OVERWRITTEN ---
+        # Scopes array setup
+        scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
+        
+        # Initialize direct tracking configuration
         ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:

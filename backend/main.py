@@ -20,18 +20,18 @@ app.add_middleware(
 def secure_cloud_authentication():
     """Headless initialization for Google Earth Engine using a Service Account Key."""
     try:
+        # Pull down the key string from your server environment variables
         key_env_var = os.environ.get("EE_SERVICE_ACCOUNT_KEY")
         if not key_env_var:
             print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected. GEE will fail to load.")
             return
 
+        # Parse string contents to structured service account tokens
         key_info = json.loads(key_env_var)
         credentials = service_account.Credentials.from_service_account_info(key_info)
-        
-        # PRODUCTION STANDARD SCOPE DEFINITION
         scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
         
-        # Initialize library with service credentials and cloud project context
+        # Explicitly pass the scoped credentials and project keyword together
         ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:
@@ -39,6 +39,16 @@ def secure_cloud_authentication():
 
 # Trigger key authorization during app startup phase
 secure_cloud_authentication()
+
+
+# ==========================================
+#   THIS IS THE ROOT HANDLER YOU NEED TO ADD
+# ==========================================
+@app.get("/")
+def home_index():
+    """Bypasses blank root directory 404 drops."""
+    return {"status": "STARi Remote Intelligence Engine Online"}
+
 
 @app.post("/process_ndvi_engine")
 async def process_ndvi_engine(request: Request):
@@ -58,7 +68,7 @@ async def process_ndvi_engine(request: Request):
 
         # 3. User inputs matching your exact GEE pipeline variables
         start_date = '2026-01-01'
-        end_date = '2026-01-31'
+        end_date = '2026-06-10'
         max_cloud = 40
 
         # 4. Cloud mask engine logic function
@@ -104,3 +114,4 @@ async def process_ndvi_engine(request: Request):
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+

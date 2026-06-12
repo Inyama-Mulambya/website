@@ -22,16 +22,16 @@ def secure_cloud_authentication():
     try:
         key_env_var = os.environ.get("EE_SERVICE_ACCOUNT_KEY")
         if not key_env_var:
-            print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected.")
+            print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected. GEE will fail to load.")
             return
 
         key_info = json.loads(key_env_var)
         credentials = service_account.Credentials.from_service_account_info(key_info)
         
-        # Scopes array setup
-        scoped_credentials = credentials.with_scopes(['https://googleapis.com/auth/earthengine'])
+        # PRODUCTION STANDARD SCOPE DEFINITION
+        scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
         
-        # Initialize direct tracking configuration
+        # Initialize library with service credentials and cloud project context
         ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:

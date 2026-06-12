@@ -29,7 +29,7 @@ def secure_cloud_authentication():
         # Parse string contents to structured service account tokens
         key_info = json.loads(key_env_var)
         credentials = service_account.Credentials.from_service_account_info(key_info)
-        scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
+        scoped_credentials = credentials.with_scopes(['https://googleapis.com/auth/earthengine'])
         
         # --- THIS ENTIRE LINE HAS TO BE OVERWRITTEN ---
         ee.Initialize(scoped_credentials, project='stari-remote-intelligence')

@@ -31,7 +31,7 @@ def secure_cloud_authentication():
         credentials = service_account.Credentials.from_service_account_info(key_info)
         scoped_credentials = credentials.with_scopes(['https://googleapis.com'])
         
-        # Initialize library with service credentials and cloud project context
+        # --- THIS ENTIRE LINE HAS TO BE OVERWRITTEN ---
         ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:

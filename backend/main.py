@@ -17,26 +17,55 @@ app.add_middleware(
     allow_headers=["*"],           # Permits all header type formats
 )
 
-
 def secure_cloud_authentication():
     """Headless initialization for Google Earth Engine using a Service Account Key."""
+    global gee_ready
     try:
-        # Pull down the key string from your server environment variables
         key_env_var = os.environ.get("EE_SERVICE_ACCOUNT_KEY")
         if not key_env_var:
-            print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected. GEE will fail to load.")
+            print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected.")
             return
 
-        # Parse string contents to structured service account tokens
         key_info = json.loads(key_env_var)
-        credentials = service_account.Credentials.from_service_account_info(key_info)
-        scoped_credentials = credentials.with_scopes(['https://googleapis.com/auth/earthengine'])
         
-        # Explicitly pass the scoped credentials and project keyword together
-        ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
+        # EXTRACT DETAILS DIRECTLY
+        email = key_info.get("client_email")
+        private_key = key_info.get("private_key")
+        project_id = 'stari-remote-intelligence'
+
+        # USE NATIVE EARTH ENGINE SERVICE ACCOUNT CONFIGURATION
+        # This bypasses the 'No access token in response' issue completely
+        credentials = ee.ServiceAccountCredentials(email, private_key)
+        
+        ee.Initialize(credentials, project=project_id)
+        gee_ready = True
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:
-        print(f"Critical error initializing Earth Engine background pipeline: {e}")
+        gee_ready = False
+        print(f"Bypassing startup token block: {e}")
+
+
+
+
+#def secure_cloud_authentication():
+   # """Headless initialization for Google Earth Engine using a Service Account Key."""
+    #try:
+        # Pull down the key string from your server environment variables
+     #   key_env_var = os.environ.get("EE_SERVICE_ACCOUNT_KEY")
+      #  if not key_env_var:
+       #     print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected. GEE will fail to load.")
+        #    return
+
+        # Parse string contents to structured service account tokens
+       # key_info = json.loads(key_env_var)
+        #credentials = service_account.Credentials.from_service_account_info(key_info)
+        #scoped_credentials = credentials.with_scopes(['https://googleapis.com/auth/earthengine'])
+        
+        # Explicitly pass the scoped credentials and project keyword together
+       # ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
+       # print("Google Earth Engine authenticated successfully via Cloud Service Account.")
+    #except Exception as e:
+     #   print(f"Critical error initializing Earth Engine background pipeline: {e}")
 
 # Trigger key authorization during app startup phase
 secure_cloud_authentication()

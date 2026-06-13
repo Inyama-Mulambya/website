@@ -11,11 +11,12 @@ app = FastAPI()
 # Automatically handles all browser security permissions
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["*"],           # Permits any frontend domain link to fetch data
+    allow_credentials=False,       # Must be False when using wildcard "*" origins
+    allow_methods=["*"],           # Permits all POST and GET options
+    allow_headers=["*"],           # Permits all header type formats
 )
+
 
 def secure_cloud_authentication():
     """Headless initialization for Google Earth Engine using a Service Account Key."""

@@ -101,7 +101,7 @@ async def process_ndvi_engine(request: Request):
         # 4. Cloud mask engine logic function
         def mask_s2(image):
             scl = image.select('SCL')
-            mask = scl.neq(3).and_(scl.neq(8)).and_(scl.neq(9)).and_(scl.neq(10))
+            mask = scl.neq(3).and(scl.neq(8)).and(scl.neq(9)).and(scl.neq(10))
             return image.updateMask(mask)
 
         # 5. NDVI function (B8 = NIR, B4 = Red)

@@ -28,16 +28,14 @@ def secure_cloud_authentication():
 
         key_info = json.loads(key_env_var)
         
-        # EXTRACT DETAILS DIRECTLY
         email = key_info.get("client_email")
         private_key = key_info.get("private_key")
-        project_id = 'stari-remote-intelligence'
 
-        # USE NATIVE EARTH ENGINE SERVICE ACCOUNT CONFIGURATION
-        # This bypasses the 'No access token in response' issue completely
+        # Create the standard Earth Engine service credentials object
         credentials = ee.ServiceAccountCredentials(email, private_key)
         
-        ee.Initialize(credentials, project=project_id)
+        # FIXED: Initialize by passing the credentials directly as the first argument
+        ee.Initialize(credentials)
         gee_ready = True
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:
@@ -45,9 +43,7 @@ def secure_cloud_authentication():
         print(f"Bypassing startup token block: {e}")
 
 
-
-
-#def secure_cloud_authentication():
+#def secur_cloud_authentication():
    # """Headless initialization for Google Earth Engine using a Service Account Key."""
     #try:
         # Pull down the key string from your server environment variables

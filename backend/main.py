@@ -26,22 +26,23 @@ def secure_cloud_authentication():
             print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected.")
             return
 
+        # Parse the JSON string from Render environment variables
         key_info = json.loads(key_env_var)
         
-        email = key_info.get("client_email")
-        private_key = key_info.get("private_key")
-
-        # Create the standard Earth Engine service credentials object
-        credentials = ee.ServiceAccountCredentials(email, private_key)
+        # 1. Use the standard google-auth library to build the token credentials
+        # This properly reads the private key string in-memory without looking for a file path
+        credentials = service_account.Credentials.from_service_account_info(key_info)
         
-        # FIXED: Initialize by passing the credentials directly as the first argument
-        ee.Initialize(credentials)
+        # 2. Append the required Earth Engine authorization scope
+        scoped_credentials = credentials.with_scopes(['https://www.googleapis.com/auth/earthengine'])
+        
+        # 3. Pass the fully authorized credentials directly into Earth Engine's initialization sequence
+        ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
         gee_ready = True
         print("Google Earth Engine authenticated successfully via Cloud Service Account.")
     except Exception as e:
         gee_ready = False
         print(f"Bypassing startup token block: {e}")
-
 
 #def secur_cloud_authentication():
    # """Headless initialization for Google Earth Engine using a Service Account Key."""

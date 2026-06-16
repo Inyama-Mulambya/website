@@ -234,16 +234,18 @@
 
  try {
       // FIXING SYNTAX ERROR: Package your inputs cleanly by targeting element names
+            // UPDATE ONLY THIS OBJECT DATA LAYER:
       const data = {
-        email: document.querySelector('[name="scan_email"]').value,
+        email: document.getElementById('scan_email').value, // Looks up by ID matching your HTML
         coordinates: [[
           [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex2_lng"]').value), parseFloat(document.querySelector('[name="vertex2_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex3_lng"]').value), parseFloat(document.querySelector('[name="vertex3_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex4_lng"]').value), parseFloat(document.querySelector('[name="vertex4_lat"]').value)],
-          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)] // Close the ring loop
+          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)] 
         ]]
       };
+
 
 
 

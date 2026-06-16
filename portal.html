@@ -235,6 +235,7 @@
     try {
       // FIXED: Reading values dynamically using querySelector by element names
       const data = {
+        email: document.getElementById('scan_email').value,
         coordinates: [[
           [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex2_lng"]').value), parseFloat(document.querySelector('[name="vertex2_lat').value)],

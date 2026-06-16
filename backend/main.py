@@ -5,6 +5,10 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from google.oauth2 import service_account
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from fastapi import BackgroundTasks 
 
 app = FastAPI()
 
@@ -68,8 +72,52 @@ def secure_cloud_authentication():
 secure_cloud_authentication()
 
 
+def send_satellite_report_email(recipient_email: str, map_url: str):
+    """Dispatches the generated Google Earth Engine link directly via free SMTP."""
+    sender_email = os.environ.get("SMTP_EMAIL")
+    sender_password = os.environ.get("SMTP_PASSWORD")
+    
+    if not sender_email or not sender_password:
+        print("Mailing engine skipped: SMTP environment configurations are missing.")
+        return
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f"STARi Command Control <{sender_email}>"
+        msg['To'] = recipient_email
+        msg['Subject'] = "🛰️ STARi MISSION CONTROL: Your Crop Health Map Vector is Ready"
+
+        body = f"""
+        STARi Mission Control Analytics Center
+        ---------------------------------------------
+        Your requested high-resolution Earth Observation (EO) satellite tracking scan has processed successfully.
+        
+        The analysis layers have been extracted via Sentinel-2 Multispectral imagery arrays.
+        
+        🟢 View and Download Your Live NDVI Crop Health Map:
+        {map_url}
+        
+        Note: This secure token web display link is actively hosted by Google Earth Engine infrastructure core layers.
+        
+        Telemetry Transmission Complete.
+        --
+        STARi Command
+        Space Data Subscriptions & Remote Sensing Intelligence
+        """
+        msg.attach(MIMEText(body, 'plain'))
+
+        with smtplib.SMTP("://gmail.com", 587) as server:
+            server.starttls()
+            server.login(sender_email, sender_password)
+            server.sendmail(sender_email, recipient_email, msg.as_string())
+            
+        print(f"Telemetry email successfully routed to recipient inbox: {recipient_email}")
+    except Exception as err:
+        print(f"Failed to transmit email dispatch sequence packet: {err}")
+
+
 # ==========================================
-#   THIS IS THE ROOT HANDLER YOU NEED TO ADD
+#   THIS IS THE ROOT HANDLER 
 # ==========================================
 @app.get("/")
 def home_index():
@@ -78,7 +126,7 @@ def home_index():
 
 
 @app.post("/process_ndvi_engine")
-async def process_ndvi_engine(request: Request):
+async def process_ndvi_engine(request: Request, background_tasks: BackgroundTasks):
     try:
         # 1. Parse coordinate geometry inputs from the website portal
         request_json = await request.json()
@@ -133,6 +181,10 @@ async def process_ndvi_engine(request: Request):
             'visParams': vis_params
         })
 
+        target_email = request_json.get("email")
+        if target_email:
+            background_tasks.add_task(send_satellite_report_email, target_email, map_id_dict['tile_fetcher'].url_format)
+        
         # Return the secure tile map URL back to your website portal dashboard
         return {
             "status": "success",

@@ -181,7 +181,7 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             'visParams': vis_params
         })
 
-                # --- TEMPORARY DIAGNOSTIC TEST SETUP INSIDE MAIN.PY ---
+        # --- TEMPORARY DIAGNOSTIC TEST SETUP INSIDE MAIN.PY ---
         generated_url = map_id_dict['tile_fetcher'].url_format
 
         target_email = request_json.get("email")
@@ -199,5 +199,6 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             "map_url": generated_url
         }
         
-        except Exception as e:
-    return JSONResponse(status_code=500, content={"error": str(e)})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+

@@ -21,6 +21,9 @@ app.add_middleware(
     allow_headers=["*"],           # Permits all header type formats
 )
 
+# FIXED: Added missing baseline global flag definition
+gee_ready = False
+
 def secure_cloud_authentication():
     """Headless initialization for Google Earth Engine using a Service Account Key."""
     global gee_ready
@@ -47,26 +50,6 @@ def secure_cloud_authentication():
     except Exception as e:
         gee_ready = False
         print(f"Bypassing startup token block: {e}")
-
-#def secur_cloud_authentication():
-   # """Headless initialization for Google Earth Engine using a Service Account Key."""
-    #try:
-        # Pull down the key string from your server environment variables
-     #   key_env_var = os.environ.get("EE_SERVICE_ACCOUNT_KEY")
-      #  if not key_env_var:
-       #     print("WARNING: EE_SERVICE_ACCOUNT_KEY variable not detected. GEE will fail to load.")
-        #    return
-
-        # Parse string contents to structured service account tokens
-       # key_info = json.loads(key_env_var)
-        #credentials = service_account.Credentials.from_service_account_info(key_info)
-        #scoped_credentials = credentials.with_scopes(['https://googleapis.com/auth/earthengine'])
-        
-        # Explicitly pass the scoped credentials and project keyword together
-       # ee.Initialize(scoped_credentials, project='stari-remote-intelligence')
-       # print("Google Earth Engine authenticated successfully via Cloud Service Account.")
-    #except Exception as e:
-     #   print(f"Critical error initializing Earth Engine background pipeline: {e}")
 
 # Trigger key authorization during app startup phase
 secure_cloud_authentication()
@@ -106,7 +89,8 @@ def send_satellite_report_email(recipient_email: str, map_url: str):
         """
         msg.attach(MIMEText(body, 'plain'))
 
-        with smtplib.SMTP("://gmail.com", 587) as server:
+        # FIXED: Corrected the broken address string layout
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, recipient_email, msg.as_string())
@@ -149,7 +133,8 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         # 4. Cloud mask engine logic function
         def mask_s2(image):
             scl = image.select('SCL')
-            mask = (scl.neq(3)).And(scl.neq(8)).And(scl.neq(9)).And(scl.neq(10))
+            # FIXED: Corrected syntax layout matching modern Earth Engine api parameters
+            mask = scl.neq(3).and_(scl.neq(8)).and_(scl.neq(9)).and_(scl.neq(10))
             return image.updateMask(mask)
 
         # 5. NDVI function (B8 = NIR, B4 = Red)
@@ -181,9 +166,16 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             'visParams': vis_params
         })
 
+        generated_url = map_id_dict['tile_fetcher'].url_format
+        target_email = request_json.get("email")
+
+        # Automatically triggers the background email queue safely for free
+        if target_email:
+            background_tasks.add_task(send_satellite_report_email, target_email, generated_url)
+
         return {
             "status": "success",
-            "map_url": map_id_dict['tile_fetcher'].url_format
+            "map_url": generated_url
         }
 
     except Exception as e:

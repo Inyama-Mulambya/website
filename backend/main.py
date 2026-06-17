@@ -106,7 +106,7 @@ def send_satellite_report_email(recipient_email: str, map_url: str):
         """
         msg.attach(MIMEText(body, 'plain'))
 
-        with smtplib.SMTP("://gmail.com", 587) as server:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
             server.starttls()
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, recipient_email, msg.as_string())

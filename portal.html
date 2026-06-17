@@ -232,19 +232,30 @@
     submitBtn.innerText = "Processing Vectors...";
     submitBtn.disabled = true;
 
- try {
-      // FIXING SYNTAX ERROR: Package your inputs cleanly by targeting element names
-            // UPDATE ONLY THIS OBJECT DATA LAYER:
+    try {
+      // DYNAMIC FIX: Automatically harvests all form inputs by checking the active form structure
+      const formData = new FormData(this);
+      
+      // Pulls out values by looking for either an id or name parameter safely
+      const targetEmailInput = document.getElementById('scan_email') || document.querySelector('[name="scan_email"]') || document.querySelector('[type="email"]');
+      const targetEmail = targetEmailInput ? targetEmailInput.value : '';
+
       const data = {
-        email: document.getElementById('scan_email').value, // Looks up by ID matching your HTML
+        email: targetEmail,
         coordinates: [[
           [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex2_lng"]').value), parseFloat(document.querySelector('[name="vertex2_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex3_lng"]').value), parseFloat(document.querySelector('[name="vertex3_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex4_lng"]').value), parseFloat(document.querySelector('[name="vertex4_lat"]').value)],
-          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)] 
+          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)] // Close the ring loop
         ]]
       };
+
+      // Keep your exact fetch('https://onrender.com') code directly below this...
+
+
+      // Keep your exact fetch('https://onrender.com') code directly below this...
+
 
 
 

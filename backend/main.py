@@ -106,7 +106,7 @@ def send_satellite_report_email(recipient_email: str, map_url: str):
         """
         msg.attach(MIMEText(body, 'plain'))
 
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        with smtplib.SMTP("://gmail.com", 587) as server:
             server.starttls()
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, recipient_email, msg.as_string())
@@ -181,24 +181,10 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             'visParams': vis_params
         })
 
-        # --- TEMPORARY DIAGNOSTIC TEST SETUP INSIDE MAIN.PY ---
-        generated_url = map_id_dict['tile_fetcher'].url_format
-
-        target_email = request_json.get("email")
-        if target_email:
-            print(f"DIAGNOSTIC TEST: Attempting direct email routing to {target_email}")
-            
-            # Change this line:
-            # background_tasks.add_task(send_satellite_report_email, target_email, generated_url)
-            
-            # To this direct call:
-            send_satellite_report_email(target_email, generated_url)
-
         return {
             "status": "success",
-            "map_url": generated_url
+            "map_url": map_id_dict['tile_fetcher'].url_format
         }
-        
+
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-

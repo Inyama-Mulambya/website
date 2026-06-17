@@ -198,4 +198,6 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             "status": "success",
             "map_url": generated_url
         }
-
+        
+        except Exception as e:
+    return JSONResponse(status_code=500, content={"error": str(e)})

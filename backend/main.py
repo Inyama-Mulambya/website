@@ -181,14 +181,22 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             'visParams': vis_params
         })
 
+                # --- TEMPORARY DIAGNOSTIC TEST SETUP INSIDE MAIN.PY ---
+        generated_url = map_id_dict['tile_fetcher'].url_format
+
         target_email = request_json.get("email")
         if target_email:
-            background_tasks.add_task(send_satellite_report_email, target_email, map_id_dict['tile_fetcher'].url_format)
-        
-        # Return the secure tile map URL back to your website portal dashboard
+            print(f"DIAGNOSTIC TEST: Attempting direct email routing to {target_email}")
+            
+            # Change this line:
+            # background_tasks.add_task(send_satellite_report_email, target_email, generated_url)
+            
+            # To this direct call:
+            send_satellite_report_email(target_email, generated_url)
+
         return {
             "status": "success",
-            "map_url": map_id_dict['tile_fetcher'].url_format
+            "map_url": generated_url
         }
 
     except Exception as e:

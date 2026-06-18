@@ -276,6 +276,7 @@
         // Locate or dynamically create a placeholder container for the satellite map image
         let mapPreviewContainer = document.getElementById('mapPreviewContainer');
         
+     
         if (!mapPreviewContainer) {
           // Build a clean, styled layout block right underneath the form buttons
           mapPreviewContainer = document.createElement('div');
@@ -290,13 +291,24 @@
           // Append it to your active form container layout
           document.getElementById('freeScanForm').appendChild(mapPreviewContainer);
         }
+    
         
         // Inject the generated Google Earth Engine satellite tile stream into an image element
+        // Inject the image alongside the clean statistical matrix scores into your website dashboard card view
         mapPreviewContainer.innerHTML = `
           <span style="font-size: 10px; display:block; margin-bottom:10px; color:#67e8f9; font-weight:bold; letter-spacing:1px;">LIVE TELEMETRY MATRIX</span>
           <img src="${result.map_url}" alt="Crop Health Matrix Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1); margin-bottom:10px;">
-          <a href="${result.map_url}" target="_blank" style="font-size:12px; text-decoration:underline; color:#67e8f9; display:block; margin-top:5px;">Open High-Resolution Map Vector</a>
+          
+          <div style="text-align: left; background: rgba(2,6,23,0.8); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-top:10px;">
+            <h4 style="color:#ffffff; margin: 0 0 8px 0; font-size:13px;">🌾 Zonal Statistics Analytics:</h4>
+            <div style="font-size:12px; margin-bottom:4px; color:#f87171;">🔴 Stressed Crop Area: <b>${result.metrics.stressed}%</b></div>
+            <div style="font-size:12px; margin-bottom:4px; color:#fbbf24;">🟡 Stable Intermediate Area: <b>${result.metrics.stable}%</b></div>
+            <div style="font-size:12px; color:#4ade80;">🟢 Optimal Peak Vigor Area: <b>${result.metrics.optimal}%</b></div>
+          </div>
+          
+          <a href="${result.map_url}" target="_blank" style="font-size:12px; text-decoration:underline; color:#67e8f9; display:block; margin-top:12px;">Open High-Resolution Map Vector</a>
         `;
+
       } else {
         alert("Engine Error: " + (result.error || "Failed to process data."));
       }

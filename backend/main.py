@@ -167,7 +167,7 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         # 7. Create Median NDVI Composite and clip it to the farm geometry
         composite = collection.select('NDVI').median().clip(geometry)
 
-                # 8. Visualization parameters matching your green/yellow/red palette
+        # 8. Visualization parameters matching your green/yellow/red palette
         vis_params = {
             'min': 0.2,
             'max': 0.8,
@@ -177,12 +177,13 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         # ========================================================
         #   REPLACE SECTION 9 AND THE RETURN BLOCK WITH THIS:
         # ========================================================
-        # 9. Extract a clean, static, high-resolution PNG image URL directly
-        # This completely replaces the broken {z}/{x}/{y} tile template link
-        generated_url = composite.getThumbURL({
-            'params': vis_params,
-            'dimensions': 1024,  # Clear, high-resolution pixel bounding scale
-            'format': 'png'     # Formats it explicitly as a standard web image file
+        # 9. Bake the visual parameters into the image to convert float values to RGB channels
+        visualized_image = composite.visualize(**vis_params)
+        
+        # 10. Extract a clean, static, high-resolution PNG image URL directly 
+        generated_url = visualized_image.getThumbURL({
+            'dimensions': 1024,  # Clear pixel bounding scale
+            'format': 'png'      # Formats it explicitly as a standard web image file
         })
 
         target_email = request_json.get("email")
@@ -198,3 +199,4 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+

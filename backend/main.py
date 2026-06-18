@@ -95,7 +95,7 @@ def send_satellite_report_email(recipient_email: str, map_url: str):
         # Package data payload into the structural formatting expected by Resend
         payload = {
             "from": "STARi Command <onboarding@resend.dev>", # Free testing domain sandbox sender
-            "to": [recipient_email],
+            "to": [str(recipient_email).strip()],
             "subject": "🛰️ STARi MISSION CONTROL: Your Crop Health Map Vector is Ready",
             "html": html_content
         }

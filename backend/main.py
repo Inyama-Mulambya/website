@@ -134,7 +134,7 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         def mask_s2(image):
             scl = image.select('SCL')
             # FIXED: Corrected syntax layout matching modern Earth Engine api parameters
-            mask = scl.neq(3).And_(scl.neq(8)).And_(scl.neq(9)).And_(scl.neq(10))
+            mask = scl.neq(3).And(scl.neq(8)).And(scl.neq(9)).And(scl.neq(10))
             return image.updateMask(mask)
 
         # 5. NDVI function (B8 = NIR, B4 = Red)

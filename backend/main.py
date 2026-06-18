@@ -180,10 +180,10 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             'visParams': vis_params
         })
 
+                # --- ENSURE THE BOTTOM OF YOUR POST ENDPOINT MATCHES THIS ---
         generated_url = map_id_dict['tile_fetcher'].url_format
         target_email = request_json.get("email")
-
-        # Automatically triggers the background email queue safely for free
+        
         if target_email:
             background_tasks.add_task(send_satellite_report_email, target_email, generated_url)
 
@@ -194,3 +194,4 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
+

@@ -269,20 +269,36 @@
       
       const result = await response.json();
       
-      if (response.ok) {
-        alert("Success! Satellite tile generated. Check browser console.");
+            if (response.ok) {
+        alert("Success! Satellite telemetry scanned successfully.");
         console.log("Processed Tile URL Map Link:", result.map_url);
-      } else {
-        alert("Engine Error: " + (result.error || "Failed to process data."));
+        
+        // Locate or dynamically create a placeholder container for the satellite map image
+        let mapPreviewContainer = document.getElementById('mapPreviewContainer');
+        
+        if (!mapPreviewContainer) {
+          // Build a clean, styled layout block right underneath the form buttons
+          mapPreviewContainer = document.createElement('div');
+          mapPreviewContainer.id = 'mapPreviewContainer';
+          mapPreviewContainer.style.marginTop = '20px';
+          mapPreviewContainer.style.padding = '15px';
+          mapPreviewContainer.style.background = 'rgba(2, 6, 23, 0.6)';
+          mapPreviewContainer.style.border = '1px dashed #67e8f9';
+          mapPreviewContainer.style.borderRadius = '12px';
+          mapPreviewContainer.style.textAlign = 'center';
+          
+          // Append it to your active form container layout
+          document.getElementById('freeScanForm').appendChild(mapPreviewContainer);
+        }
+        
+        // Inject the generated Google Earth Engine satellite tile stream into an image element
+        mapPreviewContainer.innerHTML = `
+          <span style="font-size: 10px; display:block; margin-bottom:10px; color:#67e8f9; font-weight:bold; letter-spacing:1px;">LIVE TELEMETRY MATRIX</span>
+          <img src="${result.map_url}" alt="Crop Health Matrix Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1); margin-bottom:10px;">
+          <a href="${result.map_url}" target="_blank" style="font-size:12px; text-decoration:underline; color:#67e8f9; display:block; margin-top:5px;">Open High-Resolution Map Vector</a>
+        `;
       }
 
-    } catch (err) {
-      console.error(err);
-      alert("Could not connect to the remote sensing core backend.");
-    } finally {
-      submitBtn.innerText = originalText;
-      submitBtn.disabled = false;
-    }
   });
 </script>
 </body>

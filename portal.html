@@ -269,7 +269,7 @@
       
       const result = await response.json();
       
-            if (response.ok) {
+      if (response.ok) {
         alert("Success! Satellite telemetry scanned successfully.");
         console.log("Processed Tile URL Map Link:", result.map_url);
         
@@ -297,9 +297,19 @@
           <img src="${result.map_url}" alt="Crop Health Matrix Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1); margin-bottom:10px;">
           <a href="${result.map_url}" target="_blank" style="font-size:12px; text-decoration:underline; color:#67e8f9; display:block; margin-top:5px;">Open High-Resolution Map Vector</a>
         `;
+      } else {
+        alert("Engine Error: " + (result.error || "Failed to process data."));
       }
 
+    } catch (err) {
+      console.error(err);
+      alert("Could not connect to the remote sensing core backend.");
+    } finally {
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+    }
   });
 </script>
 </body>
 </html>
+

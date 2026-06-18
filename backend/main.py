@@ -8,7 +8,8 @@ from google.oauth2 import service_account
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from fastapi import BackgroundTasks 
+from fastapi import BackgroundTasks
+import urllib.request
 
 app = FastAPI()
 
@@ -56,48 +57,61 @@ secure_cloud_authentication()
 
 
 def send_satellite_report_email(recipient_email: str, map_url: str):
-    """Dispatches the generated Google Earth Engine link directly via free SMTP."""
-    sender_email = os.environ.get("SMTP_EMAIL")
-    sender_password = os.environ.get("SMTP_PASSWORD")
-    
-    if not sender_email or not sender_password:
-        print("Mailing engine skipped: SMTP environment configurations are missing.")
+    """Dispatches the generated Google Earth Engine link securely over Port 443 via Resend's REST API."""
+    api_key = os.environ.get("RESEND_API_KEY")
+    if not api_key:
+        print("Mailing API skipped: RESEND_API_KEY variable is entirely missing.")
         return
 
     try:
-        msg = MIMEMultipart()
-        msg['From'] = f"STARi Command Control <{sender_email}>"
-        msg['To'] = recipient_email
-        msg['Subject'] = "🛰️ STARi MISSION CONTROL: Your Crop Health Map Vector is Ready"
+        # Build your dynamic rich HTML report design wrapper
+        html_content = f'''
+        <html>
+          <body style="font-family: Arial, sans-serif; background-color: #020617; color: #f8fafc; padding: 30px; margin: 0;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 25px;">
+              <div style="text-align: center; border-bottom: 1px dashed #334155; padding-bottom: 15px; margin-bottom: 20px;">
+                <span style="font-size: 11px; letter-spacing: 2px; color: #67e8f9; font-weight: bold; text-transform: uppercase;">STARi Analytics Center</span>
+                <h2 style="color: #ffffff; margin: 5px 0 0 0; font-weight: 800;">Satellite Telemetry Report</h2>
+              </div>
+              <p style="font-size: 14px; line-height: 1.6; color: #cbd5e1;">
+                Your requested high-resolution Earth Observation (EO) satellite tracking scan has processed successfully via Sentinel-2 Multispectral imagery arrays.
+              </p>
+              <div style="margin: 25px 0; text-align: center; background: #020617; padding: 15px; border-radius: 8px; border: 1px solid #1e293b;">
+                <span style="font-size: 10px; display: block; margin-bottom: 10px; color: #67e8f9; font-weight: bold;">LIVE VEGETATION MATRIX PLOT</span>
+                <img src="{map_url}" alt="Crop Health Matrix Map" style="width: 100%; max-width: 500px; border-radius: 6px; display: block; margin: 0 auto;">
+              </div>
+              <div style="text-align: center; margin-top: 25px;">
+                <a href="{map_url}" target="_blank" style="background-color: #67e8f9; color: #020617; padding: 12px 24px; font-weight: bold; border-radius: 6px; text-decoration: none; display: inline-block; font-size: 14px;">Open High-Resolution Map Vector</a>
+              </div>
+              <div style="margin-top: 30px; border-top: 1px solid #1e293b; padding-top: 15px; font-size: 11px; color: #64748b; text-align: center;">
+                Telemetry Transmission Complete.<br>
+                <strong>STARi Command</strong> &bull; Space Data Subscriptions & Remote Sensing Intelligence
+              </div>
+            </div>
+          </body>
+        </html>
+        '''
 
-        body = f"""
-        STARi Mission Control Analytics Center
-        ---------------------------------------------
-        Your requested high-resolution Earth Observation (EO) satellite tracking scan has processed successfully.
-        
-        The analysis layers have been extracted via Sentinel-2 Multispectral imagery arrays.
-        
-        🟢 View and Download Your Live NDVI Crop Health Map:
-        {map_url}
-        
-        Note: This secure token web display link is actively hosted by Google Earth Engine infrastructure core layers.
-        
-        Telemetry Transmission Complete.
-        --
-        STARi Command
-        Space Data Subscriptions & Remote Sensing Intelligence
-        """
-        msg.attach(MIMEText(body, 'plain'))
+        # Package data payload into the structural formatting expected by Resend
+        payload = {
+            "from": "STARi Command <onboarding@resend.dev>", # Free testing domain sandbox sender
+            "to": [recipient_email],
+            "subject": "🛰️ STARi MISSION CONTROL: Your Crop Health Map Vector is Ready",
+            "html": html_content
+        }
 
-        # FIXED: Corrected the broken address string layout
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, recipient_email, msg.as_string())
+        # Issue an encrypted web POST request targeting the Resend email portal
+        url = "https://resend.com"
+        req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), method='POST')
+        req.add_header('Authorization', f'Bearer {api_key}')
+        req.add_header('Content-Type', 'application/json')
+
+        with urllib.request.urlopen(req) as response:
+            res_data = response.read().decode('utf-8')
+            print(f"Mailing API verified success transaction response packet: {res_data}")
             
-        print(f"Telemetry email successfully routed to recipient inbox: {recipient_email}")
     except Exception as err:
-        print(f"Failed to transmit email dispatch sequence packet: {err}")
+        print(f"Failed to transmit email API data package: {err}")
 
 
 # ==========================================

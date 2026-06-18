@@ -167,23 +167,27 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         # 7. Create Median NDVI Composite and clip it to the farm geometry
         composite = collection.select('NDVI').median().clip(geometry)
 
-        # 8. Visualization parameters matching your green/yellow/red palette
+                # 8. Visualization parameters matching your green/yellow/red palette
         vis_params = {
             'min': 0.2,
             'max': 0.8,
             'palette': ['red', 'yellow', 'green']
         }
         
-        # 9. Generate an active public web view token tile link parameter map
-        map_id_dict = ee.data.getMapId({
-            'image': composite,
-            'visParams': vis_params
+        # ========================================================
+        #   REPLACE SECTION 9 AND THE RETURN BLOCK WITH THIS:
+        # ========================================================
+        # 9. Extract a clean, static, high-resolution PNG image URL directly
+        # This completely replaces the broken {z}/{x}/{y} tile template link
+        generated_url = composite.getThumbURL({
+            'params': vis_params,
+            'dimensions': 1024,  # Clear, high-resolution pixel bounding scale
+            'format': 'png'     # Formats it explicitly as a standard web image file
         })
 
-                # --- ENSURE THE BOTTOM OF YOUR POST ENDPOINT MATCHES THIS ---
-        generated_url = map_id_dict['tile_fetcher'].url_format
         target_email = request_json.get("email")
-        
+
+        # Automatically triggers the background email queue safely over Port 443 via Resend
         if target_email:
             background_tasks.add_task(send_satellite_report_email, target_email, generated_url)
 
@@ -194,4 +198,3 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
 
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-

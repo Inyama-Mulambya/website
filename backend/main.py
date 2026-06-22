@@ -166,20 +166,18 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
                       .map(mask_s2)
                       .map(add_ndvi))
 
-        # 7. Create Median NDVI Composite and clip it to the farm geometry
+                # 7. Create Median NDVI Composite and clip it to the farm geometry
         composite = collection.select('NDVI').median().clip(geometry)
 
-                # ========================================================
-        #   PASTE THIS ANALYTICS MATRIX EXTRACTOR INSIDE MAIN.PY
+        # ========================================================
+        #   PASTE THIS NEW METRICS CALCULATOR BLOCK HERE:
         # ========================================================
         # 7b. Execute localized pixel grid array segmentation rules inside the farm boundary
         total_pixels = composite.reduceRegion(reducer=ee.Reducer.count(), geometry=geometry, scale=10).get('NDVI')
-        
-        # Segment land clusters by health threshold parameters
         stressed_pixels = composite.updateMask(composite.lt(0.4)).reduceRegion(reducer=ee.Reducer.count(), geometry=geometry, scale=10).get('NDVI')
         optimal_pixels = composite.updateMask(composite.gt(0.6)).reduceRegion(reducer=ee.Reducer.count(), geometry=geometry, scale=10).get('NDVI')
 
-        # Convert raw pixel counts to clear probabilistic percentage scores safely inside Python memory
+        # Convert raw pixel counts to clear percentage scores safely inside Python memory
         try:
             total_val = total_pixels.getInfo() or 1
             stressed_pct = round(((stressed_pixels.getInfo() or 0) / total_val) * 100, 1)
@@ -189,7 +187,6 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             # Fallback values if the farm polygon boundary size contains extremely low resolution data
             stressed_pct, stable_pct, optimal_pct = 15.0, 50.0, 35.0
 
-
         # 8. Visualization parameters matching your green/yellow/red palette
         vis_params = {
             'min': 0.2,
@@ -197,16 +194,11 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             'palette': ['red', 'yellow', 'green']
         }
         
-        # ========================================================
-        #   REPLACE SECTION 9 AND THE RETURN BLOCK WITH THIS:
-        # ========================================================
-        # 9. Bake the visual parameters into the image to convert float values to RGB channels
+        # 9. Bake visual parameters and pull the direct high-resolution PNG image URL
         visualized_image = composite.visualize(**vis_params)
-        
-        # 10. Extract a clean, static, high-resolution PNG image URL directly 
         generated_url = visualized_image.getThumbURL({
-            'dimensions': 1024,  # Clear pixel bounding scale
-            'format': 'png'      # Formats it explicitly as a standard web image file
+            'dimensions': 1024,
+            'format': 'png'
         })
 
         target_email = request_json.get("email")
@@ -215,7 +207,9 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         if target_email:
             background_tasks.add_task(send_satellite_report_email, target_email, generated_url)
 
-        # Update your final return statement to pass the data arrays
+        # ========================================================
+        #   UPDATE YOUR FINAL RETURN TO SEND THE METRICS TO PORTAL
+        # ========================================================
         return {
             "status": "success",
             "map_url": generated_url,
@@ -226,7 +220,5 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             }
         }
 
-
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
-

@@ -103,14 +103,14 @@ def send_satellite_report_email(recipient_email: str, map_url: str):
                 }
 
         # Issue an encrypted web POST request targeting the Resend email portal
-        url = "https://resend.com"
-        req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), method='POST')
-        req.add_header('Authorization', f'Bearer {api_key}')
-        req.add_header('Content-Type', 'application/json')
+                url = "https://resend.com"
+                req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), method='POST')
+                req.add_header('Authorization', f'Bearer {api_key}')
+                req.add_header('Content-Type', 'application/json')
 
-        with urllib.request.urlopen(req) as response:
-            res_data = response.read().decode('utf-8')
-            print(f"Mailing API verified success transaction response packet: {res_data}")
+                with urllib.request.urlopen(req) as response:
+                    res_data = response.read().decode('utf-8')
+                    print(f"Mailing API verified success transaction response packet: {res_data}")
             
     except Exception as err:
         print(f"Failed to transmit email API data package: {err}")

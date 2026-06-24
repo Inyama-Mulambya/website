@@ -152,7 +152,7 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         # ==========================================
         def mask_s2(image):
             scl = image.select('SCL')
-            mask = scl.neq(3).and_(scl.neq(8)).and_(scl.neq(9)).and_(scl.neq(10))
+            mask = scl.neq(3).And_(scl.neq(8)).And_(scl.neq(9)).And_(scl.neq(10))
             return image.updateMask(mask)
 
         def add_ndvi(image):

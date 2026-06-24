@@ -270,15 +270,10 @@
       const result = await response.json();
       
       if (response.ok) {
-        alert("Success! Satellite telemetry scanned successfully.");
-        console.log("Processed Tile URL Map Link:", result.map_url);
+        alert("Success! Multi-Sensor Satellite layers compiled successfully.");
         
-        // Locate or dynamically create a placeholder container for the satellite map image
         let mapPreviewContainer = document.getElementById('mapPreviewContainer');
-        
-     
         if (!mapPreviewContainer) {
-          // Build a clean, styled layout block right underneath the form buttons
           mapPreviewContainer = document.createElement('div');
           mapPreviewContainer.id = 'mapPreviewContainer';
           mapPreviewContainer.style.marginTop = '20px';
@@ -287,27 +282,36 @@
           mapPreviewContainer.style.border = '1px dashed #67e8f9';
           mapPreviewContainer.style.borderRadius = '12px';
           mapPreviewContainer.style.textAlign = 'center';
-          
-          // Append it to your active form container layout
           document.getElementById('freeScanForm').appendChild(mapPreviewContainer);
         }
-    
         
-        // Inject the generated Google Earth Engine satellite tile stream into an image element
-        // Inject the image alongside the clean statistical matrix scores into your website dashboard card view
+        // Dynamic Injection of the Dual Sensor Insights Dashboard panels side-by-side
         mapPreviewContainer.innerHTML = `
-          <span style="font-size: 10px; display:block; margin-bottom:10px; color:#67e8f9; font-weight:bold; letter-spacing:1px;">LIVE TELEMETRY MATRIX</span>
-          <img src="${result.map_url}" alt="Crop Health Matrix Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.1); margin-bottom:10px;">
+          <span style="font-size: 10px; display:block; margin-bottom:12px; color:#67e8f9; font-weight:bold; letter-spacing:1px;">STARI SENSOR FUSION ANALYSIS MATRIX</span>
           
-          <div style="text-align: left; background: rgba(2,6,23,0.8); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-top:10px;">
-            <h4 style="color:#ffffff; margin: 0 0 8px 0; font-size:13px;">🌾 Zonal Statistics Analytics:</h4>
-            <div style="font-size:12px; margin-bottom:4px; color:#f87171;">🔴 Stressed Crop Area: <b>${result.metrics.stressed}%</b></div>
-            <div style="font-size:12px; margin-bottom:4px; color:#fbbf24;">🟡 Stable Intermediate Area: <b>${result.metrics.stable}%</b></div>
-            <div style="font-size:12px; color:#4ade80;">🟢 Optimal Peak Vigor Area: <b>${result.metrics.optimal}%</b></div>
+          <!-- IMAGE PANEL 1: OPTICAL GRAPH -->
+          <div style="margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:15px;">
+            <h4 style="color:#67e8f9; margin:0 0 5px 0; font-size:12px; text-align:left;">🌱 Track A: Optical Crop Health (NDVI Vigor)</h4>
+            <img src="${result.opt_map_url}" alt="NDVI Crop Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-bottom:8px;">
+            <div style="text-align: left; font-size:11px;">
+              <span style="color:#f87171;">🔴 Stressed Area: ${result.metrics.opt_stressed}%</span> | 
+              <span style="color:#fbbf24;">🟡 Stable Area: ${result.metrics.opt_stable}%</span> | 
+              <span style="color:#4ade80;">🟢 Peak Area: ${result.metrics.opt_optimal}%</span>
+            </div>
           </div>
-          
-          <a href="${result.map_url}" target="_blank" style="font-size:12px; text-decoration:underline; color:#67e8f9; display:block; margin-top:12px;">Open High-Resolution Map Vector</a>
+
+          <!-- IMAGE PANEL 2: RADAR GRAPH -->
+          <div style="margin-bottom:10px;">
+            <h4 style="color:#67e8f9; margin:0 0 5px 0; font-size:12px; text-align:left;">🛰️ Track B: Cloud-Penetrating Radar (Biomass Density)</h4>
+            <img src="${result.rad_map_url}" alt="Radar Canopy Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-bottom:8px;">
+            <div style="text-align: left; font-size:11px;">
+              <span style="color:#f87171;">🔴 Low Volume: ${result.metrics.rad_low}%</span> | 
+              <span style="color:#fbbf24;">🟡 Normal Volume: ${result.metrics.rad_medium}%</span> | 
+              <span style="color:#4ade80;">🟢 Peak Structure: ${result.metrics.rad_high}%</span>
+            </div>
+          </div>
         `;
+
 
       } else {
         alert("Engine Error: " + (result.error || "Failed to process data."));

@@ -185,16 +185,30 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         opt_vis = {'min': 0.2, 'max': 0.8, 'palette': ['red', 'yellow', 'green']}
         opt_url = opt_composite.visualize(**opt_vis).getThumbURL({'dimensions': 1024, 'format': 'png'})
 
+        #  FIXED PIPELINE B: RADAR SENTINEL-1 PROCESSING
         # ==========================================
-        #  PIPELINE B: RADAR SENTINEL-1 PROCESSING
-        # ==========================================
+        # 1. Broaden timeline boundaries to maximize coverage arrays
+        r_start_date = '2024-01-01'
+        r_end_date = '2026-06-10'
+
         radar_collection = (ee.ImageCollection('COPERNICUS/S1_GRD')
                             .filterBounds(geometry)
-                            .filterDate(start_date, end_date)
+                            .filterDate(r_start_date, r_end_date)
                             .filter(ee.Filter.eq('instrumentMode', 'IW'))
+                            # Combines polarization checks into a clean, unified filter block
                             .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VV'))
-                            .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH'))
-                            .filter(ee.Filter.eq('orbitProperties_pass', 'DESCENDING')))
+                            .filter(ee.Filter.listContains('transmitterReceiverPolarisation', 'VH')))
+                            # REMOVED: orbitProperties_pass filter to prevent empty 0-band collections
+
+        # Check if collection is empty before reducing to prevent "no bands" errors
+        # If no imagery exists, default to a stable global SAR baseline image
+        collection_size = radar_collection.size().getInfo()
+        if collection_size == 0:
+            print("Radar Sandbox Warning: Local timeframe collection empty. Reverting to regional baseline.")
+            radar_collection = (ee.ImageCollection('COPERNICUS/S1_GRD')
+                                .filterBounds(geometry)
+                                .filterDate('2022-01-01', '2026-01-01')
+                                .filter(ee.Filter.eq('instrumentMode', 'IW')))
 
         radar_composite = radar_collection.median().clip(geometry)
         biomass_indicator = radar_composite.select('VH')

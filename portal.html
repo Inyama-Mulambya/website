@@ -287,27 +287,22 @@
         
         // Dynamic Injection of the Dual Sensor Insights Dashboard panels side-by-side
         mapPreviewContainer.innerHTML = `
-          <span style="font-size: 10px; display:block; margin-bottom:12px; color:#67e8f9; font-weight:bold; letter-spacing:1px;">STARI SENSOR FUSION ANALYSIS MATRIX</span>
+          <span style="font-size: 10px; display:block; margin-bottom:12px; color:#67e8f9; font-weight:bold; letter-spacing:1px;">STARI CORE INTEL INTELLIGENCE CORE</span>
           
-          <!-- IMAGE PANEL 1: OPTICAL GRAPH -->
-          <div style="margin-bottom:20px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:15px;">
-            <h4 style="color:#67e8f9; margin:0 0 5px 0; font-size:12px; text-align:left;">🌱 Track A: Optical Crop Health (NDVI Vigor)</h4>
-            <img src="${result.opt_map_url}" alt="NDVI Crop Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-bottom:8px;">
-            <div style="text-align: left; font-size:11px;">
-              <span style="color:#f87171;">🔴 Stressed Area: ${result.metrics.opt_stressed}%</span> | 
-              <span style="color:#fbbf24;">🟡 Stable Area: ${result.metrics.opt_stable}%</span> | 
-              <span style="color:#4ade80;">🟢 Peak Area: ${result.metrics.opt_optimal}%</span>
-            </div>
+          <div style="background: rgba(2,6,23,0.9); padding: 15px; border-radius: 8px; border: 1px solid #1e293b; text-align: left; margin-bottom: 15px; font-size:13px; line-height:1.5;">
+            <h4 style="color:#ffffff; margin: 0 0 10px 0; font-size:14px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom:5px;">🌾 Plain Language Field Diagnosis:</h4>
+            <div style="margin-bottom:10px; color:#fbbf24;">⚡ <b>Nitrogen Channel:</b> ${result.metrics.nitrogen_message}</div>
+            <div style="color:#cbd5e1;">📡 <b>Biomass Canopy Channel:</b> ${result.metrics.general_message}</div>
           </div>
 
-          <!-- IMAGE PANEL 2: RADAR GRAPH -->
-          <div style="margin-bottom:10px;">
-            <h4 style="color:#67e8f9; margin:0 0 5px 0; font-size:12px; text-align:left;">🛰️ Track B: Cloud-Penetrating Radar (Biomass Density)</h4>
-            <img src="${result.rad_map_url}" alt="Radar Canopy Map" style="width:100%; border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-bottom:8px;">
-            <div style="text-align: left; font-size:11px;">
-              <span style="color:#f87171;">🔴 Low Volume: ${result.metrics.rad_low}%</span> | 
-              <span style="color:#fbbf24;">🟡 Normal Volume: ${result.metrics.rad_medium}%</span> | 
-              <span style="color:#4ade80;">🟢 Peak Structure: ${result.metrics.rad_high}%</span>
+          <div style="display:flex; gap:10px; margin-top:15px;">
+            <div style="flex:1;">
+              <span style="font-size:11px; color:#67e8f9; display:block; margin-bottom:4px;">Optical Health (NDVI)</span>
+              <img src="${result.opt_map_url}" style="width:100%; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
+            </div>
+            <div style="flex:1;">
+              <span style="font-size:11px; color:#67e8f9; display:block; margin-bottom:4px;">Radar Structure (SAR)</span>
+              <img src="${result.rad_map_url}" style="width:100%; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
             </div>
           </div>
         `;

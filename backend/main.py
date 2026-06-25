@@ -231,7 +231,7 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
         except Exception:
             opt_stressed, opt_healthy, nitro_deficient = 12.5, 87.5, 18.2
 
-        # Create Images URL links
+
         opt_vis = {'min': 0.2, 'max': 0.8, 'palette': ['red', 'yellow', 'green']}
         opt_url = opt_composite.select('NDVI').visualize(**opt_vis).getThumbURL({'dimensions': 1024, 'format': 'png'})
 

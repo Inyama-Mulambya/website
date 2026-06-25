@@ -232,8 +232,15 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
             opt_stressed, opt_healthy, nitro_deficient = 12.5, 87.5, 18.2
 
 
-        opt_vis = {'min': 0.2, 'max': 0.8, 'palette': ['red', 'yellow', 'green']}
-        opt_url = opt_composite.select('NDVI').visualize(**opt_vis).getThumbURL({'dimensions': 1024, 'format': 'png'})
+        # ========================================================
+        # 8. Create Optical Image URL (Explicitly maps single band channel)
+        opt_vis = {
+            'bands': ['NDVI'],
+            'min': 0.2, 
+            'max': 0.8, 
+            'palette': ['red', 'yellow', 'green']
+        }
+        opt_url = opt_composite.visualize(**opt_vis).getThumbURL({'dimensions': 1024, 'format': 'png'})
 
         # ==========================================
         #  PIPELINE B: RADAR CANOPY STRUCTURE
@@ -246,9 +253,17 @@ async def process_ndvi_engine(request: Request, background_tasks: BackgroundTask
 
         radar_composite = radar_collection.median().clip(geometry)
         biomass_indicator = radar_composite.select('VH')
-        radar_url = biomass_indicator.visualize({'min': -23, 'max': -10, 'palette': ['#020617', '#38bdf8', '#06b6d4']}).getThumbURL({'dimensions': 1024, 'format': 'png'})
-
-        # ==========================================
+        
+        # 9. Create Radar Image URL (Explicitly maps the 'VH' band parameter channel)
+        radar_vis = {
+            'bands': ['VH'],
+            'min': -23, 
+            'max': -10, 
+            'palette': ['#020617', '#38bdf8', '#06b6d4']
+        }
+        radar_url = biomass_indicator.visualize(**radar_vis).getThumbURL({'dimensions': 1024, 'format': 'png'})
+        
+# ==========================================
         #  FARMER-FRIENDLY PLAIN LANGUAGE TRANSLATOR
         # ==========================================
         if nitro_deficient > 15:

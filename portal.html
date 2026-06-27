@@ -270,41 +270,76 @@
       const result = await response.json();
       
       if (response.ok) {
-        alert("Success! Multi-Sensor Satellite layers compiled successfully.");
-        
         let mapPreviewContainer = document.getElementById('mapPreviewContainer');
         if (!mapPreviewContainer) {
           mapPreviewContainer = document.createElement('div');
           mapPreviewContainer.id = 'mapPreviewContainer';
-          mapPreviewContainer.style.marginTop = '20px';
-          mapPreviewContainer.style.padding = '15px';
-          mapPreviewContainer.style.background = 'rgba(2, 6, 23, 0.6)';
-          mapPreviewContainer.style.border = '1px dashed #67e8f9';
+          mapPreviewContainer.style.marginTop = '25px';
+          mapPreviewContainer.style.padding = '20px';
+          mapPreviewContainer.style.background = '#0f172a';
+          mapPreviewContainer.style.border = '1px solid #1e293b';
           mapPreviewContainer.style.borderRadius = '12px';
-          mapPreviewContainer.style.textAlign = 'center';
           document.getElementById('freeScanForm').appendChild(mapPreviewContainer);
         }
         
-        // Dynamic Injection of the Dual Sensor Insights Dashboard panels side-by-side
+        // Build recommendations list items dynamically
+        let actionsHtml = result.metrics.actions.map(action => `<li style="margin-bottom:6px; color:#cbd5e1;">📌 ${action}</li>`).join('');
+
         mapPreviewContainer.innerHTML = `
-          <span style="font-size: 10px; display:block; margin-bottom:12px; color:#67e8f9; font-weight:bold; letter-spacing:1px;">STARI CORE INTEL INTELLIGENCE CORE</span>
-          
-          <div style="background: rgba(2,6,23,0.9); padding: 15px; border-radius: 8px; border: 1px solid #1e293b; text-align: left; margin-bottom: 15px; font-size:13px; line-height:1.5;">
-            <h4 style="color:#ffffff; margin: 0 0 10px 0; font-size:14px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom:5px;">🌾 Plain Language Field Diagnosis:</h4>
-            <div style="margin-bottom:10px; color:#fbbf24;">⚡ <b>Nitrogen Channel:</b> ${result.metrics.nitrogen_message}</div>
-            <div style="color:#cbd5e1;">📡 <b>Biomass Canopy Channel:</b> ${result.metrics.general_message}</div>
+          <!-- REPORT HEADER BLOCK -->
+          <div style="border-bottom:1px dashed #334155; padding-bottom:12px; margin-bottom:15px; text-align:left;">
+            <span style="font-size:10px; color:#67e8f9; font-weight:bold; letter-spacing:1px; text-transform:uppercase;">STARi Precision Analytics Briefing</span>
+            <h3 style="color:#ffffff; margin:4px 0 0 0; font-size:18px; font-weight:800;">Integrated Field Condition Audit</h3>
+            <span style="font-size:11px; color:#64748b;">Optical Baseline: <b>${result.optical_date}</b> | Radar Profile: <b>${result.radar_date}</b></span>
           </div>
 
-          <div style="display:flex; gap:10px; margin-top:15px;">
-            <div style="flex:1;">
-              <span style="font-size:11px; color:#67e8f9; display:block; margin-bottom:4px;">Optical Health (NDVI)</span>
-              <img src="${result.opt_map_url}" style="width:100%; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
+          <!-- SUMMARY INSIGHT CARD -->
+          <div style="background:#020617; padding:12px; border-radius:8px; border-left:4px solid #67e8f9; text-align:left; margin-bottom:15px; font-size:13px; color:#cbd5e1;">
+            <b>📋 Executive Summary:</b> ${result.metrics.summary}
+          </div>
+
+          <!-- THE 4-CHANNEL FARMER AG METRIX GRID -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; text-align:left; margin-bottom:15px;">
+            <div style="background:#020617; padding:10px; border-radius:6px; border:1px solid #1e293b;">
+              <span style="font-size:11px; color:#94a3b8; display:block;">🌾 Nutrients & Nitrogen Risk</span>
+              <b style="font-size:18px; color:${result.metrics.nitrogen > 15 ? '#f87171' : '#4ade80'};">${result.metrics.nitrogen}% Deficient</b>
             </div>
-            <div style="flex:1;">
-              <span style="font-size:11px; color:#67e8f9; display:block; margin-bottom:4px;">Radar Structure (SAR)</span>
-              <img src="${result.rad_map_url}" style="width:100%; border-radius:6px; border:1px solid rgba(255,255,255,0.1);">
+            <div style="background:#020617; padding:10px; border-radius:6px; border:1px solid #1e293b;">
+              <span style="font-size:11px; color:#94a3b8; display:block;">💧 Water Content & Drought Stress</span>
+              <b style="font-size:18px; color:${result.metrics.water > 15 ? '#f87171' : '#4ade80'};">${result.metrics.water}% Hydration Risk</b>
+            </div>
+            <div style="background:#020617; padding:10px; border-radius:6px; border:1px solid #1e293b;">
+              <span style="font-size:11px; color:#94a3b8; display:block;">🐛 Pest & Cellular Degradation Risk</span>
+              <b style="font-size:18px; color:${result.metrics.pests > 15 ? '#f87171' : '#4ade80'};">${result.metrics.pests}% Tissue Stress</b>
+            </div>
+            <div style="background:#020617; padding:10px; border-radius:6px; border:1px solid #1e293b;">
+              <span style="font-size:11px; color:#94a3b8; display:block;">🛰️ Asset Presence & Biomass (Radar)</span>
+              <b style="font-size:18px; color:#38bdf8;">${result.metrics.assets}% Verified Stand</b>
             </div>
           </div>
+
+          <!-- IMAGERY PANEL VIEWPORTS -->
+          <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <div style="flex:1;">
+              <span style="font-size:10px; color:#67e8f9; display:block; margin-bottom:4px; text-align:left;">Optical Vigor (NDVI)</span>
+              <img src="${result.opt_map_url}" style="width:100%; border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+            </div>
+            <div style="flex:1;">
+              <span style="font-size:10px; color:#67e8f9; display:block; margin-bottom:4px; text-align:left;">Radar Structure (SAR)</span>
+              <img src="${result.rad_map_url}" style="width:100%; border-radius:6px; border:1px solid rgba(255,255,255,0.05);">
+            </div>
+          </div>
+
+          <!-- ACTION PLAN BLOCK -->
+          <div style="background:#020617; padding:12px; border-radius:8px; border:1px solid #1e293b; text-align:left; margin-bottom:15px; font-size:13px;">
+            <h4 style="color:#ffffff; margin:0 0 8px 0; font-size:13px; font-weight:bold;">🛠️ Recommended Management Actions:</h4>
+            <ul style="margin:0; padding-left:15px; font-size:12px;">${actionsHtml}</ul>
+          </div>
+
+          <!-- DOWNLOAD REPORT TRIGGER BUTTON -->
+          <button type="button" onclick="window.print()" style="width:100%; padding:10px; background:#67e8f9; color:#020617; font-weight:bold; font-size:13px; border:none; border-radius:6px; cursor:pointer;">
+            📥 Download / Print Field Briefing Report
+          </button>
         `;
 
 

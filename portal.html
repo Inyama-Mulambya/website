@@ -265,7 +265,7 @@
       const selectedScope = document.getElementById('sector_scope').value;
       const endpointRoute = selectedScope === 'construction' ? '/process_construction_engine' : '/process_ndvi_engine';
 
-      const response = await fetch(`https://onrender.com${endpointRoute}`, {
+      const response = await fetch(`https://stari-ndvi-engine.onrender.com/process_ndvi_engine`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

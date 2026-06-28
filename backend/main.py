@@ -309,38 +309,43 @@ async def process_ndvi_engine(request: Request):
             summary = "Excellent! All sensor metrics indicate healthy, high-yield vegetative growth across the board."
             recommendations.append("Maintain current standard watering and maintenance schedules. No corrective action required.")
 
+
         # ========================================================
-        #  UN-SCRAMBLEABLE PERIMETER BOUNDARY NAVIGATION BUILDER
+        #  BULLETPROOF PERIMETER BOUNDARY NAVIGATION LINK BUILDER
         # ========================================================
-        navigation_url = "https://google.com"  # Hard baseline default anchor
+        # Baseline fallback address
+        navigation_url = "https://www.google.com/maps" 
 
         try:
-            # Safe array unpacker: processes both single and double-nested polygon loops safely
+            # 1. Unpack coordinates arrays safely
             raw_list = coords if isinstance(coords, list) else coords
-            
             if isinstance(raw_list, list) and len(raw_list) > 0:
+                # If coordinates are double-nested, extract the inner array loop
+                if isinstance(raw_list[0], list) and isinstance(raw_list[0][0], list):
+                    raw_list = raw_list[0]
+                    
                 path_points = []
                 for vertex in raw_list:
-                    # Inverts the axes safely from [lng, lat] to standard GPS "lat,lng" format
                     if isinstance(vertex, list) and len(vertex) >= 2:
-                        lng_val = float(vertex)
-                        lat_val = float(vertex)
+                        lng_val = float(vertex[0])
+                        lat_val = float(vertex[1])
                         path_points.append(f"{lat_val},{lng_val}")
                 
                 if path_points:
                     path_string = "|".join(path_points)
                     
-                    # FIXED: Uses standard array index selections instead of a broken .split() method
-                    first_point = path_points
+                    # 2. FIXED WRAPPER: Safely isolates explicit numbers, completely clearing hidden list brackets
+                    first_point = path_points[0]
                     anchor_lat = first_point.split(',')[0]
                     anchor_lng = first_point.split(',')[1]
                     
-                    # Generates an authentic multi-vertex deep-link path layout
-                    navigation_url = f"https://google.com/maps/dir/?api=1&destination={anchor_lat},{anchor_lng}&travelmode=walking&waypoints={path_string}"
+                    # 3. UN-SCRAMBLEABLE DIRECT DEEP-LINK URL PATHWAY
+                    navigation_url = f"https://www.google.com/maps/dir/?api=1&destination={anchor_lat},{anchor_lng}&travelmode=walking&waypoints={path_string}"
                     
         except Exception as poly_err:
             print(f"Navigation array parser warning (Routing to default): {poly_err}")
-            navigation_url = "https://google.com"
+            navigation_url = "https://www.google.com/maps"
+
 
         # YOUR CLEAN ORIGINAL RETURN STATEMENT CAN STAY RIGHT BELOW THIS:
         return {

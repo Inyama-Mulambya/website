@@ -340,6 +340,7 @@ async def process_ndvi_engine(request: Request):
             "optical_date": optical_date,
             "radar_date": radar_date,
             "opt_map_url": opt_url,
+            "navigation_url": navigation_url,
             "rad_map_url": radar_url,
             "metrics": {
                 "nitrogen": nitrogen_deficit_pct,

@@ -308,25 +308,32 @@ async def process_ndvi_engine(request: Request):
         if not recommendations:
             summary = "Excellent! All sensor metrics indicate healthy, high-yield vegetative growth across the board."
             recommendations.append("Maintain current standard watering and maintenance schedules. No corrective action required.")
-            
-        try:
-            # Isolate the primary boundary corners from your input coordinates
-            polygon_vertices = coords[0]
-            
-            # Build a coordinate tracking path string for Google Maps
-            path_string = "|".join([f"{v[1]},{v[0]}" for v in polygon_vertices])
-            
-            # Use the first vertex as the primary anchor flag to focus the lens
-            center_lat = polygon_vertices[0][1]
-            center_lon = polygon_vertices[0][0]
-            
-            # Generate the boundary route navigation link
-            navigation_link = f"https://google.com{center_lat},{center_lon}&travelmode=walking&waypoints={path_string}"
-            
-        except Exception as poly_err:
-            print(f"Boundary link generation bypass: {poly_err}")
-            navigation_link = "https://google.com"
+
         # ========================================================
+        #  BULLETPROOF BOUNDARY NAVIGATION LINK ARRAY CONSTRUCTOR
+        # ========================================================
+        # Create a default fallback link upfront to guarantee this variable ALWAYS exists
+        navigation_url = "https://google.com"
+
+        try:
+            # Safe array unpacker: handles both single and double-nested polygon coordinates loops
+            raw_list = coords[0] if isinstance(coords[0], list) and isinstance(coords[0][0], list) else coords
+            if isinstance(raw_list, list) and len(raw_list) > 0:
+                path_points = []
+                for vertex in raw_list:
+                    if isinstance(vertex, list) and len(vertex) >= 2:
+                        lng_val = vertex[0]
+                        lat_val = vertex[1]
+                        path_points.append(f"{lat_val},{lng_val}")
+                
+                if path_points:
+                    path_string = "|".join(path_points)
+                    anchor_lat, anchor_lng = path_points[0].split(',')
+                    # FIXED STRING GENERATION: Always maps directly to the navigation_url variable key
+                    navigation_url = f"https://google.com/dir/?api=1&destination={anchor_lat},{anchor_lng}&travelmode=walking&waypoints={path_string}"
+        except Exception as poly_err:
+            print(f"Navigation array parser warning (Routing to default): {poly_err}")
+            navigation_url = "https://google.com"
 
         return {
             "status": "success",

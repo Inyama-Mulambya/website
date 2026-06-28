@@ -417,8 +417,7 @@ async def process_construction_engine(request: Request):
         vertical_structures = radar_now.select('VH').gt(-13)
         vertical_pixels = vertical_structures.updateMask(vertical_structures.eq(1)).reduceRegion(reducer=ee.Reducer.count(), geometry=geometry, scale=10).get('VH')
 
-                # ========================================================
-        
+
         # ========================================================
         # Calculate Percentage Footprint Metrics Safely
         try:

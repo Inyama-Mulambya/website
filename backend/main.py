@@ -336,7 +336,7 @@ async def process_ndvi_engine(request: Request):
                     anchor_lng = first_point.split(',')[1]
                     
                     # Generates an authentic multi-vertex deep-link path layout
-                    navigation_url = f"https://google.com{anchor_lat},{anchor_lng}&travelmode=walking&waypoints={path_string}"
+                    navigation_url = f"https://google.com/maps/dir/?api=1&destination={anchor_lat},{anchor_lng}&travelmode=walking&waypoints={path_string}"
                     
         except Exception as poly_err:
             print(f"Navigation array parser warning (Routing to default): {poly_err}")

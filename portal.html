@@ -6,13 +6,13 @@
   <title>Client Portal | STARi</title>
   <link rel="stylesheet" href="styles.css">
   
-  <!-- 1. Core Leaflet Mapping Engine (Fully Specified Paths) -->
-  <link rel="stylesheet" href="https://unpkg.com" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-  <script src="https://unpkg.com" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- 1. Cloudflare Mapping Mirrors (Clears Edge Tracker Blocks & CORS Crushes) -->
+  <link rel="stylesheet" href="https://cloudflare.com" crossorigin="anonymous" />
+  <script src="https://cloudflare.com" crossorigin="anonymous"></script>
   
-  <!-- 2. Geoman Pro Drag & Draw Structural Shapes Tool Extension -->
-  <link rel="stylesheet" href="https://unpkg.com" />
-  <script src="https://unpkg.com"></script>
+  <!-- 2. Cloudflare GIS Shapes Toolkit Extension -->
+  <link rel="stylesheet" href="https://cloudflare.com" crossorigin="anonymous" />
+  <script src="https://cloudflare.com" crossorigin="anonymous"></script>
 </head>
 <body>
 
@@ -215,7 +215,7 @@ L.tileLayer('https://arcgisonline.com{z}/{y}/{x}', {
 
 
 // 1. Instantly inject a professional GIS shape drawing toolbar onto the map canvas
-map.pm.addControls({
+map.PM.addControls({
   position: 'topleft',
   drawMarker: false,     // Disable unnecessary points pins
   drawCircleMarker: false,
@@ -229,7 +229,7 @@ map.pm.addControls({
 });
 
 // Set global custom styles for the drawn fields
-map.pm.setGlobalOptions({ 
+map.PM.setGlobalOptions({ 
   pathOptions: { color: '#67e8f9', fillColor: 'rgba(6,182,212,0.15)', weight: 3 } 
 });
 

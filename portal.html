@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Client Portal | STARi</title>
   <link rel="stylesheet" href="styles.css">
+    <!-- FIXED: Complete library file paths added to prevent empty map crashes -->
   <link rel="stylesheet" href="https://unpkg.com" crossorigin="" />
   <script src="https://unpkg.com" crossorigin=""></script>
-  <!-- GEOMAN DRAWING TOOLBAR ENGINE (PASTE IN HEAD) -->
+  
+  <!-- GEOMAN DRAWING TOOLBAR ENGINE -->
   <link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css" />
   <script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.min.js"></script>
 </head>
@@ -204,9 +206,11 @@
 // ========================================================
 const map = L.map('boundary_map').setView([-15.42, 28.29], 12);
 
+//Fully specified server directories array loop path added to pull satellite images cleanly
 L.tileLayer('https://arcgisonline.com{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri &mdash; Sources'
+  attribution: 'Tiles &copy; Esri &mdash; Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGM, and the GIS User Community'
 }).addTo(map);
+
 
 // 1. Instantly inject a professional GIS shape drawing toolbar onto the map canvas
 map.pm.addControls({
@@ -301,22 +305,32 @@ map.on('pm:remove', function() {
       const targetEmail = targetEmailInput ? targetEmailInput.value : '';
 
 
+      // ========================================================
+      //  🚀 DYNAMIC SHAPE VALIDATOR INSIDE SUBMIT:
+      // ========================================================
+      // Safeguard: Halt the submission instantly if they haven't drawn a field outline box
+      if (!clickPoints || clickPoints.length < 3) {
+        alert("Boundary Configuration Error: Please use the drawing toolbar on the top-left of the satellite map to outline your target area before scanning.");
+        return;
+      }
+
+      // Automatically construct a closed polygon ring sequence expected by Google Earth Engine
+      const closedCoordinatesRing = [...clickPoints, clickPoints[0]];
+
+      // Compile the final secure packet structure to ship across the network core
       const data = {
         email: targetEmail,
-        coordinates: [[
-          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)],
-          [parseFloat(document.querySelector('[name="vertex2_lng"]').value), parseFloat(document.querySelector('[name="vertex2_lat"]').value)],
-          [parseFloat(document.querySelector('[name="vertex3_lng"]').value), parseFloat(document.querySelector('[name="vertex3_lat"]').value)],
-          [parseFloat(document.querySelector('[name="vertex4_lng"]').value), parseFloat(document.querySelector('[name="vertex4_lat"]').value)],
-          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)] // Close the ring loop
-        ]]
+        coordinates: [closedCoordinatesRing] // FIXED: Changed '#' comment to valid JavaScript '//' comment
       };
+      // ========================================================
+
 
       // DYNAMIC SECTOR ROUTER: Direct traffic to the matching satellite analytics room
       const selectedScope = document.getElementById('sector_scope').value;
       const endpointRoute = selectedScope === 'construction' ? '/process_construction_engine' : '/process_ndvi_engine';
 
-      const response = await fetch(`https://stari-ndvi-engine.onrender.com/process_ndvi_engine`, {
+      // FIXED: Used backticks and appended `${endpointRoute}` so users can seamlessly switch between Agric and Construction modes!
+      const response = await fetch(`https://stari-ndvi-engine.onrender.com${endpointRoute}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)

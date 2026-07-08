@@ -332,21 +332,37 @@
 
 
       // ========================================================
-      //  🚀 DYNAMIC SHAPE VALIDATOR INSIDE SUBMIT:
+      // 🚀 RESTORED MANUAL DATA HARVESTER & POLYGON PACKAGING
       // ========================================================
-      // Safeguard: Halt the submission instantly if they haven't drawn a field outline box
-      if (!clickPoints || clickPoints.length < 3) {
-        alert("Boundary Configuration Error: Please use the drawing toolbar on the top-left of the satellite map to outline your target area before scanning.");
+      // Read values directly from your 4 manual text input boxes
+      const v1_lat = parseFloat(document.querySelector('[name="vertex1_lat"]').value);
+      const v1_lng = parseFloat(document.querySelector('[name="vertex1_lng"]').value);
+      const v2_lat = parseFloat(document.querySelector('[name="vertex2_lat"]').value);
+      const v2_lng = parseFloat(document.querySelector('[name="vertex2_lng"]').value);
+      const v3_lat = parseFloat(document.querySelector('[name="vertex3_lat"]').value);
+      const v3_lng = parseFloat(document.querySelector('[name="vertex3_lng"]').value);
+      const v4_lat = parseFloat(document.querySelector('[name="vertex4_lat"]').value);
+      const v4_lng = parseFloat(document.querySelector('[name="vertex4_lng"]').value);
+
+      // Verify all coordinate boxes contain valid numerical decimal coordinates
+      if (isNaN(v1_lat) || isNaN(v1_lng) || isNaN(v2_lat) || isNaN(v2_lng) || isNaN(v3_lat) || isNaN(v3_lng) || isNaN(v4_lat) || isNaN(v4_lng)) {
+        alert("Input Configuration Error: Please ensure all 4 coordinate boxes are completely filled with valid numbers before running the scan.");
         return;
       }
 
-      // Automatically construct a closed polygon ring sequence expected by Google Earth Engine
-      const closedCoordinatesRing = [...clickPoints, clickPoints[0]];
+      // Automatically construct the closed polygon ring array sequence expected by your backend server
+      const closedCoordinatesRing = [
+        [v1_lng, v1_lat],
+        [v2_lng, v2_lat],
+        [v3_lng, v3_lat],
+        [v4_lng, v4_lat],
+        [v1_lng, v1_lat] // Closes the geometric box loop array securely
+      ];
 
-      // Compile the final secure packet structure to ship across the network core
+      // Compile the final packet data payload structure
       const data = {
         email: targetEmail,
-        coordinates: [closedCoordinatesRing] // FIXED: Changed '#' comment to valid JavaScript '//' comment
+        coordinates: [closedCoordinatesRing] // Maps your manual coordinates to your active backend pipelines!
       };
       // ========================================================
 

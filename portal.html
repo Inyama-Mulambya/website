@@ -224,23 +224,38 @@ L.tileLayer('https://arcgisonline.com{z}/{y}/{x}', {
   attribution: 'Tiles &copy; Esri'
 }).addTo(map);
 
-//Double-check that these read capitalized PM, not lowercase pm!
-map.PM.addControls({
+
+// ========================================================
+//  map.PM.addControls BLOCK SAFE MATRIX:
+// ========================================================
+const geomanControls = {
   position: 'topleft',
   drawMarker: false,
   drawCircleMarker: false,
   drawPolyline: false,
-  drawRectangle: true,
-  drawPolygon: true,
+  drawRectangle: true,   // Allow dragging neat squares
+  drawPolygon: true,     // Allow snapping custom multi-vertex shapes
   drawCircle: false,
-  editMode: true,
+  editMode: true,        // Allows the farmer to drag corners to adjust their mistake!
   dragMode: true,
-  removalMode: true
-});
+  removalMode: true      // Trash can shortcut to clear the board
+};
 
-map.PM.setGlobalOptions({ 
-  pathOptions: { color: '#67e8f9', fillColor: 'rgba(6,182,212,0.15)', weight: 3 } 
-});
+const geomanOptions = {
+  pathOptions: { color: '#67e8f9', fillColor: 'rgba(6,182,212,0.15)', weight: 3 }
+};
+
+// Auto-detect and bind to whichever layer (pm or PM) your active CDN loaded successfully
+if (map.pm) {
+  map.pm.addControls(geomanControls);
+  map.pm.setGlobalOptions(geomanOptions);
+} else if (map.PM) {
+  map.PM.addControls(geomanControls);
+  map.PM.setGlobalOptions(geomanOptions);
+} else {
+  console.warn("Geoman drawing tools layer not found on map instance.");
+}
+// ========================================================
 
 
 let clickPoints = [];
@@ -266,6 +281,7 @@ map.on('pm:create', function(e) {
 map.on('pm:remove', function() {
   clickPoints = [];
 });
+
 
   // --- Module 1 Form UI Toggle Logic ---
   const serviceSelector = document.getElementById('serviceSelector');

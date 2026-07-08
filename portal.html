@@ -198,10 +198,17 @@
             </div>
           </div>
 
+          <div style="margin-bottom: 15px; text-align: left;">
+            <label class="form-label" style="display:block; margin-bottom: 4px;">📅 Select Historical Audit Target Date (Optional)</label>
+            <span style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 6px;">
+              Leave blank to fetch the latest real-time tracking data, or select a past date to time-travel and verify historical farm logs.
+            </span>
+            <input type="date" id="historical_date" name="historical_date" style="width: 100%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px; cursor: pointer;">
+          </div>
 
-
-          <!-- ADDED SUBMIT BUTTON HERE -->
+          <!-- ADDED SUBMIT BUTTON HERE (LEAVE ALONE BELOW IT) -->
           <button type="submit" class="btn" style="width:100%; border:none; cursor:pointer; justify-content:center; background:#67e8f9; color:#020617; margin-top: 15px; padding: 12px; font-weight: bold; border-radius: 8px;">Initialize Target Scan</button>
+
 
         </form>
       </div>
@@ -359,9 +366,16 @@
         [v1_lng, v1_lat] // Closes the geometric box loop array securely
       ];
 
+      // ========================================================
+      // 🛰️ EXTRACT AND INJECT THE HISTORICAL TIMELINE TOKEN HERE:
+      // ========================================================
+      // Harvest the calendar date string selected by the user ("YYYY-MM-DD" or empty)
+      const selectedDate = document.getElementById('historical_date').value;
+
       // Compile the final packet data payload structure
       const data = {
         email: targetEmail,
+        historical_date: selectedDate, // <-- Pushes the back-date key straight into your Python backend parameters!
         coordinates: [closedCoordinatesRing] // Maps your manual coordinates to your active backend pipelines!
       };
       // ========================================================

@@ -391,6 +391,27 @@ async def process_construction_engine(request: Request):
         coords = request_json['coordinates']
         geometry = ee.Geometry.Polygon(coords)
 
+        # Extract the optional historical date string sent by the client frontend webpage
+        client_historical_date = request_json.get("historical_date") # Expected: "YYYY-MM-DD"
+        
+        if client_historical_date:
+            # Target Past Milestone Window (Filters data around the historical audit moment)
+            try:
+                end_date = datetime.strptime(client_historical_date, "%Y-%m-%d")
+            except ValueError:
+                # Security fallback if date string formatting is scrambled
+                end_date = datetime.now()
+            start_date = end_date - timedelta(days=60)
+        else:
+            # Latest Real-Time Monitoring Window Baseline
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=90)
+            
+        end_str = end_date.strftime('%Y-%m-%d')
+        start_str = start_date.strftime('%Y-%m-%d')
+        # ========================================================
+        
+
         # 1. TIME-TRAVEL WINDOWS: Baseline (Past) vs Present (Now)
         now_date = datetime.now()
         past_date = now_date - timedelta(days=365) # 1 Year ago tracking baseline

@@ -5,12 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Client Portal | STARi</title>
   <link rel="stylesheet" href="styles.css">
-  
-  <link rel="stylesheet" href="https://cloudflare.com" />
-  <script src="https://cloudflare.com"></script>
-
 </head>
 <body>
+
 
 <div class="bg"></div>
 <div class="glow"></div>
@@ -168,21 +165,39 @@
 
 
           
-          <!-- INTERACTIVE SATELLITE FIELD BOUNDARY CAPTURE CANVAS -->
+          <!-- 🚀 manual coordinate input: -->
           <div style="margin-bottom: 15px; text-align: left;">
-            <label class="form-label" style="display:block; margin-bottom: 6px;">🗺️ Define Target Field Boundaries</label>
-            <span style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 8px;">
-            Click/Tap directly on the satellite map below to drop your perimeter corners in sequence (Minimum 3 points required).
-            </span>
-  
-            <!-- The physical map window container slot -->
-            <div id="boundary_map" style="width: 100%; height: 320px; border-radius: 8px; border: 1px solid #1e293b; background: #020617; position: relative; z-index: 1;"></div>
-  
-            <!-- Clear Boundary Button Shortcut -->
-            <button type="button" id="clear_map_btn" style="margin-top: 8px; padding: 6px 12px; background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.2); border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold;">
-            🔄 Clear Drawn Boundary Points
-            </button>
+            <label class="form-label" style="display:block; margin-bottom: 4px;">📍 Vertex 1 Coordinates (Starting Anchor Corner)</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" name="vertex1_lat" placeholder="Latitude (e.g. -15.429)" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+              <input type="text" name="vertex1_lng" placeholder="Longitude (e.g. 28.289)" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+            </div>
           </div>
+
+          <div style="margin-bottom: 15px; text-align: left;">
+            <label class="form-label" style="display:block; margin-bottom: 4px;">📍 Vertex 2 Coordinates</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" name="vertex2_lat" placeholder="Latitude" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+              <input type="text" name="vertex2_lng" placeholder="Longitude" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 15px; text-align: left;">
+            <label class="form-label" style="display:block; margin-bottom: 4px;">📍 Vertex 3 Coordinates</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" name="vertex3_lat" placeholder="Latitude" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+              <input type="text" name="vertex3_lng" placeholder="Longitude" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 15px; text-align: left;">
+            <label class="form-label" style="display:block; margin-bottom: 4px;">📍 Vertex 4 Coordinates</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" name="vertex4_lat" placeholder="Latitude" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+              <input type="text" name="vertex4_lng" placeholder="Longitude" required style="width: 50%; padding: 10px; background: #0f172a; color: #f8fafc; border: 1px solid #1e293b; border-radius: 6px; font-size: 13px;">
+            </div>
+          </div>
+
 
 
           <!-- ADDED SUBMIT BUTTON HERE -->
@@ -197,68 +212,73 @@
 
 <!-- SCRIPTS FOR INTERACTIVE DOM TOGGLES AND BACKEND API PIPELINE -->
 <script>
+  // --- Python Backend Integration Code ---
+  document.getElementById('freeScanForm').addEventListener('submit', async function(e) {
+    e.preventDefault(); // Stop standard form refresh
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = "Processing Vectors...";
+    submitBtn.disabled = true;
 
-// ========================================================
-//  LEAFLET ENGINE SAFE INTEGRATION WORKSPACE
-// ========================================================
-// FORCE DEFINITION: If the external network link failed, manually initialize L directly inside your file right now
-if (typeof L === 'undefined') {
-    console.warn("STARi System Alert: Remote CDN offline. Injecting safe local mockup configuration arrays.");
-    window.L = {
-        map: function() { 
-            return { 
-                setView: function() { return { addTo: function() {} }; }, 
-                pm: { addControls: function() {}, setGlobalOptions: function() {} }, 
-                PM: { addControls: function() {}, setGlobalOptions: function() {} }, 
-                on: function() {} 
-            }; 
-        },
-        tileLayer: function() { return { addTo: function() {} }; }
-    };
-}
+    try {
+      const targetEmailInput = document.getElementById('scan_email') || document.querySelector('[name="scan_email"]') || document.querySelector('[type="email"]');
+      const targetEmail = targetEmailInput ? targetEmailInput.value : '';
 
-// Execute standard map setup seamlessly
-const map = L.map('boundary_map').setView([-15.42, 28.29], 12);
+      // RESTORED: Bulletproof data harvester that reads your manual decimal coordinates directly
+      const data = {
+        email: targetEmail,
+        coordinates: [[
+          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)],
+          [parseFloat(document.querySelector('[name="vertex2_lng"]').value), parseFloat(document.querySelector('[name="vertex2_lat"]').value)],
+          [parseFloat(document.querySelector('[name="vertex3_lng"]').value), parseFloat(document.querySelector('[name="vertex3_lat"]').value)],
+          [parseFloat(document.querySelector('[name="vertex4_lng"]').value), parseFloat(document.querySelector('[name="vertex4_lat"]').value)],
+          [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)] // Close the polygon ring loop array
+        ]]
+      };
 
-L.tileLayer('https://arcgisonline.com{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri'
-}).addTo(map);
+      // DYNAMIC SECTOR ROUTER: Direct traffic to the matching satellite analytics room
+      const selectedScope = document.getElementById('sector_scope').value;
+      const endpointRoute = selectedScope === 'construction' ? '/process_construction_engine' : '/process_ndvi_engine';
 
+      const response = await fetch(`https://onrender.com${endpointRoute}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
 
-// ========================================================
-//  map.PM.addControls BLOCK SAFE MATRIX:
-// ========================================================
-const geomanControls = {
-  position: 'topleft',
-  drawMarker: false,
-  drawCircleMarker: false,
-  drawPolyline: false,
-  drawRectangle: true,   // Allow dragging neat squares
-  drawPolygon: true,     // Allow snapping custom multi-vertex shapes
-  drawCircle: false,
-  editMode: true,        // Allows the farmer to drag corners to adjust their mistake!
-  dragMode: true,
-  removalMode: true      // Trash can shortcut to clear the board
-};
+      const result = await response.json();
 
-const geomanOptions = {
-  pathOptions: { color: '#67e8f9', fillColor: 'rgba(6,182,212,0.15)', weight: 3 }
-};
+      if (response.ok && result.status === "success") {
+        // Clear old results and inject your functional dashboards and live Google Maps button loops
+        const resultsWrapper = document.getElementById('resultsWrapper');
+        if (resultsWrapper) {
+          resultsWrapper.style.display = 'block';
+          resultsWrapper.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Dynamically assign variables to visual template spots
+        document.getElementById('optDate').innerText = result.optical_date || 'N/A';
+        document.getElementById('radDate').innerText = result.radar_date || 'N/A';
+        document.getElementById('nitrogenProgress').style.width = result.metrics.nitrogen + '%';
+        document.getElementById('waterProgress').style.width = result.metrics.water + '%';
+        
+        // ASSIGN THE FIXED GOOGLE MAPS NAVIGATION LINK VALUE DIRECTLY HERE:
+        const navBtn = document.getElementById('navBtn');
+        if (navBtn) { navBtn.href = result.navigation_url; }
+      } else {
+        alert("Engine Error: " + (result.error || "Failed to process data."));
+      }
 
-// Auto-detect and bind to whichever layer (pm or PM) your active CDN loaded successfully
-if (map.pm) {
-  map.pm.addControls(geomanControls);
-  map.pm.setGlobalOptions(geomanOptions);
-} else if (map.PM) {
-  map.PM.addControls(geomanControls);
-  map.PM.setGlobalOptions(geomanOptions);
-} else {
-  console.warn("Geoman drawing tools layer not found on map instance.");
-}
-// ========================================================
+    } catch (err) {
+      console.error(err);
+      alert("Could not connect to the remote sensing core backend.");
+    } finally {
+      submitBtn.innerText = originalText;
+      submitBtn.disabled = false;
+    }
+  });''
 
-
-let clickPoints = [];
 
 // 2. LISTEN EVENT: Capture the absolute coordinate vectors the exact second they finish drawing a shape
 map.on('pm:create', function(e) {

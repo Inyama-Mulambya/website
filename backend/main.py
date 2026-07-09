@@ -347,23 +347,25 @@ async def process_ndvi_engine(request: Request):
             navigation_url = "https://www.google.com/maps"
 
 
-        # YOUR CLEAN ORIGINAL RETURN STATEMENT CAN STAY RIGHT BELOW THIS:
+        # 🔍 LOCATE THE RETURN BLOCK FOR THE AGRICULTURE ENDPOINT AND UPGRADE IT:
+        # Extract the actual historical dates from the Earth Engine metadata tags
+        opt_time = latest_opt_image.get('system:time_start').getInfo()
+        rad_time = latest_radar.get('system:time_start').getInfo()
+        
+        actual_opt_date = datetime.fromtimestamp(opt_time / 1000.0).strftime('%Y-%m-%d')
+        actual_rad_date = datetime.fromtimestamp(rad_time / 1000.0).strftime('%Y-%m-%d')
+
         return {
             "status": "success",
-            "optical_date": optical_date,
-            "radar_date": radar_date,
-            "opt_map_url": opt_url,
-            "navigation_url": navigation_url, # Guaranteed delivery variable
-            "rad_map_url": radar_url,
+            "optical_date": actual_opt_date,  # FIXED: Returns the true back-dated image pass date
+            "radar_date": actual_rad_date,    # FIXED: Returns the true back-dated radar pass date
             "metrics": {
-                "nitrogen": nitrogen_deficit_pct,
-                "water": water_stress_pct,
-                "pests": pest_risk_pct,
-                "assets": asset_presence_pct,
-                "summary": summary,
-                "actions": recommendations
-            }
+                "nitrogen": round(float((low_nitrogen / total_pixels) * 100 if total_pixels else 0), 1),
+                "water": round(float((water_stressed / total_pixels) * 100 if total_pixels else 0), 1)
+            },
+            "navigation_url": navigation_url
         }
+
 
 
     except Exception as e:
@@ -532,8 +534,8 @@ async def process_construction_engine(request: Request):
         return {
             "status": "success",
             "sector_type": "construction",  # <-- Guaranteed parameter delivery row
-            "past_date": past_date_str,
-            "now_date": now_date_str,
+            "optical_date": past_date_str,  # FIXED: Returns the back-dated baseline year string (e.g. "Mar 2025")
+            "radar_date": now_date_str,    # FIXED: Returns your inserted calendar target date string (e.g. "Mar 2026")
             "before_map_url": before_url,
             "after_map_url": after_url,
             "metrics": {

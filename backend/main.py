@@ -412,15 +412,31 @@ async def process_construction_engine(request: Request):
         # ========================================================
         
 
-        # 1. TIME-TRAVEL WINDOWS: Baseline (Past) vs Present (Now)
-        now_date = datetime.now()
-        past_date = now_date - timedelta(days=365) # 1 Year ago tracking baseline
+        # ========================================================
+        # 🏗️ DYNAMIC TIME-TRAVEL ROUTINE FOR CONSTRUCTION ENGINE
+        # ========================================================
+        # 1. Harvest the optional historical target date from the user's form payload
+        client_historical_date = request_json.get("historical_date") # Format: "YYYY-MM-DD"
         
-        present_start = (now_date - timedelta(days=120)).strftime('%Y-%m-%d')
-        present_end = now_date.strftime('%Y-%m-%d')
+        if client_historical_date:
+            # Set target "present" moment to your inserted calendar date
+            present_end_date = datetime.strptime(client_historical_date, "%Y-%m-%d")
+        else:
+            # Fall back to the literal current day if left blank
+            present_end_date = datetime.now()
+            
+        # 2. Automatically shift both tracking windows relative to your selected date
+        present_start_date = present_end_date - timedelta(days=90)
+        baseline_end_date = present_end_date - timedelta(days=365)
+        baseline_start_date = baseline_end_date - timedelta(days=90)
         
-        baseline_start = (past_date - timedelta(days=60)).strftime('%Y-%m-%d')
-        baseline_end = (past_date + timedelta(days=60)).strftime('%Y-%m-%d')
+        # Convert date objects to standard Google Earth Engine string formats
+        present_end = present_end_date.strftime('%Y-%m-%d')
+        present_start = present_start_date.strftime('%Y-%m-%d')
+        baseline_end = baseline_end_date.strftime('%Y-%m-%d')
+        baseline_start = baseline_start_date.strftime('%Y-%m-%d')
+        # ========================================================
+
 
         # Helper function to mask clouds and calculate NDBI (Concrete/Built-up tracker)
         def process_urban_layers(image):

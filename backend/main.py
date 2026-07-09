@@ -412,7 +412,7 @@ async def process_construction_engine(request: Request):
         end_str = end_date.strftime('%Y-%m-%d')
         start_str = start_date.strftime('%Y-%m-%d')
         # ========================================================
-        
+
 
         # ========================================================
         # 🏗️ DYNAMIC TIME-TRAVEL ROUTINE FOR CONSTRUCTION ENGINE
@@ -470,11 +470,27 @@ async def process_construction_engine(request: Request):
         past_img = past_collection.first().clip(geometry)
         now_img = now_collection.first().clip(geometry)
         
-        past_date_str = datetime.fromtimestamp(past_img.get('system:time_start').getInfo() / 1000.0).strftime('%b %Y')
-        now_date_str = datetime.fromtimestamp(now_img.get('system:time_start').getInfo() / 1000.0).strftime('%b %Y')
+        past_img = past_collection.first().clip(geometry)
+        now_img = now_collection.first().clip(geometry)
+        
+        # ========================================================
+        # 🚀 FIXED METADATA EXTRACTOR (PREVENTS CONSTRUCTION 500 CRASHES)
+        # ========================================================
+        try:
+            past_time = ee.Number(past_img.get('system:time_start')).getInfo()
+            now_time = ee.Number(now_img.get('system:time_start')).getInfo()
+            
+            past_date_str = datetime.fromtimestamp(past_time / 1000.0).strftime('%b %Y')
+            now_date_str = datetime.fromtimestamp(now_time / 1000.0).strftime('%b %Y')
+        except Exception:
+            # Absolute Failsafe: Use your calculated datetime values if GEE timeouts occur
+            past_date_str = (datetime.strptime(client_historical_date, "%Y-%m-%d") - timedelta(days=365)).strftime('%b %Y') if client_historical_date else "Past Year"
+            now_date_str = datetime.strptime(client_historical_date, "%Y-%m-%d").strftime('%b %Y') if client_historical_date else datetime.now().strftime('%b %Y')
+        # ========================================================
 
-        # 4. TEMPORAL DIFFERENCING MATH: Subtract Past NDBI from Present NDBI
+        # 4. TEMPORAL DIFFERENCING MATH: Subtract Past NDBI from Present NDBI (LEAVE ALONE BELOW IT)
         ndbi_change = now_img.select('NDBI').subtract(past_img.select('NDBI'))
+
         
         # Isolate areas where concrete/infrastructure metrics spiked significantly
         new_foundations = ndbi_change.gt(0.25)

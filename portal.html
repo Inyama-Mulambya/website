@@ -272,26 +272,30 @@
         const radDateEl = document.getElementById('radDate');
         if (radDateEl) { radDateEl.innerText = result.radar_date || 'N/A'; }
 
-        // 3. SAFE METRICS ROUTER: Handle both Agriculture and Infrastructure properties without crashing
+        // 3. SAFE METRICS ROUTER: Clear out undefined text strings by explicitly verifying variable names
         if (result.metrics) {
           
           // --- Track A: Agriculture Progress Bars ---
-          const nitroBar = document.getElementById('nitrogenProgress');
+          const nitroBar = document.getElementById('nitrogenProgress') || document.getElementById('nitrogen_deficit_pct');
           if (nitroBar && result.metrics.nitrogen !== undefined) {
             nitroBar.style.width = result.metrics.nitrogen + '%';
+            nitroBar.innerText = result.metrics.nitrogen + '%';
           }
           
-          const waterBar = document.getElementById('waterProgress');
+          const waterBar = document.getElementById('waterProgress') || document.getElementById('water_stress_pct');
           if (waterBar && result.metrics.water !== undefined) {
             waterBar.style.width = result.metrics.water + '%';
+            waterBar.innerText = result.metrics.water + '%';
           }
           
-          const pestBar = document.getElementById('pestProgress');
+          // FIXED: Explicitly binds to result.metrics.pest to clear the "undefined" label bug!
+          const pestBar = document.getElementById('pestProgress') || document.getElementById('pest_risk_pct') || document.getElementById('biomassProgress');
           if (pestBar && result.metrics.pest !== undefined) {
             pestBar.style.width = result.metrics.pest + '%';
+            pestBar.innerText = result.metrics.pest + '%';
           }
 
-          // --- Track B: Infrastructure Progress Bars (Only fills if running Construction mode) ---
+          // --- Track B: Infrastructure Progress Bars ---
           const foundationBar = document.getElementById('foundationProgress');
           if (foundationBar && result.metrics.foundation !== undefined) {
             foundationBar.style.width = result.metrics.foundation + '%';
@@ -301,42 +305,38 @@
           if (verticalBar && result.metrics.vertical !== undefined) {
             verticalBar.style.width = result.metrics.vertical + '%';
           }
-
-          // --- Track C: Construction Action Summaries Matrix ---
-          // FIXED SAFEHOUSE: Only runs the mapping loop if actions exist in the payload!
-          const actionsContainer = document.getElementById('actionsList'); 
-          if (actionsContainer && result.metrics.actions && Array.isArray(result.metrics.actions)) {
-            actionsContainer.innerHTML = result.metrics.actions.map(act => `<li>${act}</li>`).join('');
-          } else if (actionsContainer) {
-            // Clear out old text data if switching back to standard Agriculture modes
-            actionsContainer.innerHTML = '';
-          }
-          
-          // Update the main textual description element if it exists in the payload
-          const summaryText = document.getElementById('summaryText');
-          if (summaryText && result.metrics.summary) {
-            summaryText.innerHTML = result.metrics.summary;
-          }
         }
         
-        // 4. SAFE NAVIGATION LINK SETTER: Assign the action button if it exists
+        // 4. FIXED SATELLITE IMAGE RENDERING: Force links to read as direct web URLs instead of local C-drive folders
+        const beforeImg = document.getElementById('beforeMap') || document.getElementById('beforeImage');
+        if (beforeImg && result.before_map_url) {
+          beforeImg.src = result.before_map_url;
+        }
+
+        const afterImg = document.getElementById('afterMap') || document.getElementById('afterImage');
+        if (afterImg && result.after_url) {
+          afterImg.src = result.after_url;
+        } else if (afterImg && result.after_map_url) {
+          afterImg.src = result.after_map_url;
+        }
+        
+        // 5. SAFE NAVIGATION LINK SETTER: Assign the action button if it exists
         const navBtn = document.getElementById('navBtn');
         if (navBtn && result.navigation_url) { 
           navBtn.href = result.navigation_url; 
         }
 
+        // 6. Action Lists Safey Mapper Block
+        let actionsHtml = '';
+        if (result.metrics && result.metrics.actions && Array.isArray(result.metrics.actions)) {
+          actionsHtml = result.metrics.actions.map(action => `<li style="margin-bottom:6px; color:#cbd5e1;">📌 ${action}</li>`).join('');
+        }
+        const actionsContainer = document.getElementById('actionsList');
+        if (actionsContainer) { actionsContainer.innerHTML = actionsHtml; }
+
       } else {
         alert("Engine Error: " + (result.error || "Failed to process data."));
       }
-
-    } catch (err) {
-      console.error(err);
-      alert("Could not connect to the remote sensing core backend.");
-    } finally {
-      submitBtn.innerText = originalText;
-      submitBtn.disabled = false;
-    }
-  });
 
 
   // --- Module 1 Form UI Toggle Logic ---

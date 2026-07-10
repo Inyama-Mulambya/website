@@ -458,7 +458,24 @@
           document.getElementById('freeScanForm').appendChild(mapPreviewContainer);
         }
         
-        let actionsHtml = result.metrics.actions.map(action => `<li style="margin-bottom:6px; color:#cbd5e1;">📌 ${action}</li>`).join('');
+        // ========================================================
+        // 🚀 FIXED: WRAPPED ACTIONS MAP MATRIX IN AN EXISTENCE CHECK
+        // ========================================================
+        let actionsHtml = '';
+        
+        // Only run the mapping loop if actions are explicitly present in the data payload
+        if (result.metrics && result.metrics.actions && Array.isArray(result.metrics.actions)) {
+          actionsHtml = result.metrics.actions.map(action => 
+            `<li style="margin-bottom:6px; color:#cbd5e1;">📌 ${action}</li>`
+          ).join('');
+        }
+
+        // Safely update the HTML container only if it exists on your page layout
+        const actionsContainer = document.getElementById('actionsList') || document.querySelector('.actions-list');
+        if (actionsContainer) {
+          actionsContainer.innerHTML = actionsHtml;
+        }
+        // ========================================================
 
         // PATHWAY A: IF USER RAN A CONSTRUCTION STRUCTURAL AUDIT
         if (result.sector_type === 'construction') {

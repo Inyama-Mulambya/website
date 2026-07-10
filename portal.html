@@ -275,7 +275,7 @@
         // 3. SAFE METRICS ROUTER: Handle both Agriculture and Infrastructure properties without crashing
         if (result.metrics) {
           
-          // --- Agriculture Progress Bars ---
+          // --- Track A: Agriculture Progress Bars ---
           const nitroBar = document.getElementById('nitrogenProgress');
           if (nitroBar && result.metrics.nitrogen !== undefined) {
             nitroBar.style.width = result.metrics.nitrogen + '%';
@@ -291,16 +291,31 @@
             pestBar.style.width = result.metrics.pest + '%';
           }
 
-          // --- Infrastructure Progress Bars (Only fills if running Construction mode) ---
+          // --- Track B: Infrastructure Progress Bars (Only fills if running Construction mode) ---
           const foundationBar = document.getElementById('foundationProgress');
           if (foundationBar && result.metrics.foundation !== undefined) {
             foundationBar.style.width = result.metrics.foundation + '%';
           }
           
-          // Fixed a matching check rule error for vertical progress trackers
           const verticalBar = document.getElementById('verticalProgress');
           if (verticalBar && result.metrics.vertical !== undefined) {
             verticalBar.style.width = result.metrics.vertical + '%';
+          }
+
+          // --- Track C: Construction Action Summaries Matrix ---
+          // FIXED SAFEHOUSE: Only runs the mapping loop if actions exist in the payload!
+          const actionsContainer = document.getElementById('actionsList'); 
+          if (actionsContainer && result.metrics.actions && Array.isArray(result.metrics.actions)) {
+            actionsContainer.innerHTML = result.metrics.actions.map(act => `<li>${act}</li>`).join('');
+          } else if (actionsContainer) {
+            // Clear out old text data if switching back to standard Agriculture modes
+            actionsContainer.innerHTML = '';
+          }
+          
+          // Update the main textual description element if it exists in the payload
+          const summaryText = document.getElementById('summaryText');
+          if (summaryText && result.metrics.summary) {
+            summaryText.innerHTML = result.metrics.summary;
           }
         }
         

@@ -357,11 +357,13 @@ async def process_ndvi_engine(request: Request):
 
         return {
             "status": "success",
-            "optical_date": actual_opt_date,  # FIXED: Returns the true back-dated image pass date
-            "radar_date": actual_rad_date,    # FIXED: Returns the true back-dated radar pass date
+            "optical_date": actual_opt_date,  
+            "radar_date": actual_rad_date,    
             "metrics": {
-                "nitrogen": round(float((low_nitrogen / total_pixels) * 100 if total_pixels else 0), 1),
-                "water": round(float((water_stressed / total_pixels) * 100 if total_pixels else 0), 1)
+                # FIXED: Swapped raw objects out for your safe, calculated percentage floats!
+                "nitrogen": nitrogen_deficit_pct,
+                "water": water_stress_pct,
+                "pest": pest_risk_pct
             },
             "navigation_url": navigation_url
         }

@@ -258,22 +258,58 @@
       const result = await response.json();
 
       if (response.ok && result.status === "success") {
-        // Clear old results and inject your functional dashboards and live Google Maps button loops
+        // 1. SAFE CONTAINER CHECK: Show the results panel smoothly if it exists on your page
         const resultsWrapper = document.getElementById('resultsWrapper');
         if (resultsWrapper) {
           resultsWrapper.style.display = 'block';
           resultsWrapper.scrollIntoView({ behavior: 'smooth' });
         }
         
-        // Dynamically assign variables to visual template spots
-        document.getElementById('optDate').innerText = result.optical_date || 'N/A';
-        document.getElementById('radDate').innerText = result.radar_date || 'N/A';
-        document.getElementById('nitrogenProgress').style.width = result.metrics.nitrogen + '%';
-        document.getElementById('waterProgress').style.width = result.metrics.water + '%';
+        // 2. SAFE TEXT SETTERS: Check if the dates exist in the HTML before writing to them
+        const optDateEl = document.getElementById('optDate');
+        if (optDateEl) { optDateEl.innerText = result.optical_date || 'N/A'; }
         
-        // ASSIGN THE FIXED GOOGLE MAPS NAVIGATION LINK VALUE DIRECTLY HERE:
+        const radDateEl = document.getElementById('radDate');
+        if (radDateEl) { radDateEl.innerText = result.radar_date || 'N/A'; }
+
+        // 3. SAFE METRICS ROUTER: Handle both Agriculture and Infrastructure properties without crashing
+        if (result.metrics) {
+          
+          // --- Agriculture Progress Bars ---
+          const nitroBar = document.getElementById('nitrogenProgress');
+          if (nitroBar && result.metrics.nitrogen !== undefined) {
+            nitroBar.style.width = result.metrics.nitrogen + '%';
+          }
+          
+          const waterBar = document.getElementById('waterProgress');
+          if (waterBar && result.metrics.water !== undefined) {
+            waterBar.style.width = result.metrics.water + '%';
+          }
+          
+          const pestBar = document.getElementById('pestProgress');
+          if (pestBar && result.metrics.pest !== undefined) {
+            pestBar.style.width = result.metrics.pest + '%';
+          }
+
+          // --- Infrastructure Progress Bars (Only fills if running Construction mode) ---
+          const foundationBar = document.getElementById('foundationProgress');
+          if (foundationBar && result.metrics.foundation !== undefined) {
+            foundationBar.style.width = result.metrics.foundation + '%';
+          }
+          
+          // Fixed a matching check rule error for vertical progress trackers
+          const verticalBar = document.getElementById('verticalProgress');
+          if (verticalBar && result.metrics.vertical !== undefined) {
+            verticalBar.style.width = result.metrics.vertical + '%';
+          }
+        }
+        
+        // 4. SAFE NAVIGATION LINK SETTER: Assign the action button if it exists
         const navBtn = document.getElementById('navBtn');
-        if (navBtn) { navBtn.href = result.navigation_url; }
+        if (navBtn && result.navigation_url) { 
+          navBtn.href = result.navigation_url; 
+        }
+
       } else {
         alert("Engine Error: " + (result.error || "Failed to process data."));
       }
@@ -285,7 +321,7 @@
       submitBtn.innerText = originalText;
       submitBtn.disabled = false;
     }
-  });''
+  });
 
 
   // --- Module 1 Form UI Toggle Logic ---

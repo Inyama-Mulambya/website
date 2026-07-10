@@ -232,9 +232,12 @@
       const targetEmailInput = document.getElementById('scan_email') || document.querySelector('[name="scan_email"]') || document.querySelector('[type="email"]');
       const targetEmail = targetEmailInput ? targetEmailInput.value : '';
 
+      const selectedDate = document.getElementById('historical_date') ? document.getElementById('historical_date').value : '';
+
       // RESTORED: Bulletproof data harvester that reads your manual decimal coordinates directly
       const data = {
         email: targetEmail,
+        historical_date: selectedDate,
         coordinates: [[
           [parseFloat(document.querySelector('[name="vertex1_lng"]').value), parseFloat(document.querySelector('[name="vertex1_lat"]').value)],
           [parseFloat(document.querySelector('[name="vertex2_lng"]').value), parseFloat(document.querySelector('[name="vertex2_lat"]').value)],
@@ -423,14 +426,11 @@
       // Harvest the calendar date string selected by the user ("YYYY-MM-DD" or empty)
       const selectedDate = document.getElementById('historical_date').value;
 
-      // Compile the final packet data payload structure
       const data = {
         email: targetEmail,
-        historical_date: selectedDate, // <-- Pushes the back-date key straight into your Python backend parameters!
-        coordinates: [closedCoordinatesRing] // Maps your manual coordinates to your active backend pipelines!
+        historical_date: selectedDate, // 2. THIS IS THE ONLY CHANGE INSIDE THE DATA CARRIER
+        coordinates: [closedCoordinatesRing]
       };
-      // ========================================================
-
 
       // DYNAMIC SECTOR ROUTER: Direct traffic to the matching satellite analytics room
       const selectedScope = document.getElementById('sector_scope').value;

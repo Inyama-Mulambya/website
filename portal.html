@@ -348,8 +348,11 @@ map.on('pm:remove', function() {
           document.getElementById('freeScanForm').appendChild(mapPreviewContainer);
         }
         
-        let actionsHtml = result.metrics.actions.map(action => `<li style="margin-bottom:6px; color:#cbd5e1;">📌 ${action}</li>`).join('');
-
+        let actionsHtml = '';
+        if (result.metrics && result.metrics.actions && Array.isArray(result.metrics.actions)) {
+          actionsHtml = result.metrics.actions.map(action => `<li style="margin-bottom:6px; color:#cbd5e1;">📌 ${action}</li>`).join('');
+        }
+        
         // PATHWAY A: IF USER RAN A CONSTRUCTION STRUCTURAL AUDIT
         if (result.sector_type === 'construction') {
           mapPreviewContainer.innerHTML = `

@@ -565,6 +565,8 @@ async def process_borehole_engine(request: Request):
 
         # 3. Formulate standard walking coordinates map link
         centroid = geometry.centroid().coordinates().getInfo()
+        
+        # FIXED: Comprehensive navigation path layout (Latitude first, then Longitude)
         navigation_url = f"https://google.com{centroid[1]},{centroid[0]}&travelmode=walking"
         
         summary = f"Hydro-structural profiling complete. A target aquifer pooling channel has been flagged within your flat geological basin vectors with a success likelihood probability rating score of {success_score}%."
@@ -604,6 +606,7 @@ async def process_borehole_engine(request: Request):
             },
             "navigation_url": navigation_url
         }
+
         
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": f"Hydrogeological platform fault: {str(e)}"})

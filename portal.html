@@ -557,6 +557,23 @@
               </div>
             </div>
 
+            <!-- HYDROGEOLOGICAL MAP LEGEND & HEATMAP VISUALS -->
+            <div style="background:#020617; padding:12px; border-radius:8px; border:1px solid #1e293b; text-align:left; margin-bottom:15px;">
+              <span style="font-size:10px; color:#4ade80; font-weight:bold; display:block; margin-bottom:6px; letter-spacing:1px; text-transform:uppercase;">🗺️ Hydro-Potential Zonal Classification Map</span>
+              
+              <!-- Color Code Map Legend Dashboard Panel Layout -->
+              <div style="display:flex; gap:10px; font-size:11px; margin-bottom:12px; background:#0f172a; padding:8px; border-radius:6px;">
+                <div style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:12px; height:12px; background:#06b6d4; border-radius:2px;"></span> 🎯 High Aquifer Pooling</div>
+                <div style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:12px; height:12px; background:#10b981; border-radius:2px;"></span> 🌳 Perennial Root Anchor</div>
+                <div style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:12px; height:12px; background:#1e293b; border-radius:2px;"></span> 🪨 Standard Bedrock</div>
+              </div>
+
+              <!-- True Satellite Render Image Container Asset -->
+              <div style="width:100%; text-align:center;">
+                <img src="${result.hydro_map_url || ''}" style="width:100%; max-height:400px; border-radius:6px; border:1px solid rgba(255,255,255,0.08); background:#090d16;" alt="Underground Water Potential Map View Layer">
+              </div>
+            </div>
+
             <!-- SMARTPHONE TARGET NAVIGATOR BUTTON -->
             <div style="margin-bottom: 15px;">
               <a href="${result.navigation_url || '#'}" target="_blank" style="display: block; width: 100%; padding: 12px; background: #4ade80; color: #020617; font-weight: bold; text-align: center; text-decoration: none; border-radius: 6px; font-size: 13px; font-weight: bold; box-shadow: 0 4px 6px -1px rgba(74, 222, 128, 0.2);">

@@ -568,10 +568,34 @@ async def process_borehole_engine(request: Request):
         navigation_url = f"https://google.com{centroid[1]},{centroid[0]}&travelmode=walking"
         
         summary = f"Hydro-structural profiling complete. A target aquifer pooling channel has been flagged within your flat geological basin vectors with a success likelihood probability rating score of {success_score}%."
+
+
+        # ========================================================
+        # 🛰️ VISUAL LAND-USE HEATMAP CLASSIFICATION ENGINE
+        # ========================================================
+        # Combine layers into a single classification map layer asset:
+        # Value 0 = Dry Bedrock/Bare Soil, Value 1 = Perennial Deep Roots, Value 2 = High Borehole Potential
+        classification_map = ee.Image(0).where(deep_root_mask.eq(1), 1).where(hydro_potential_map.eq(1), 2).clip(geometry)
         
+        # Color-coding visualization configuration parameter layout metrics
+        # Palette Mapping: #1e293b (Slate Gray), #10b981 (Emerald Green), #06b6d4 (Bright Aqua Blue)
+        vis_params = {
+            'min': 0,
+            'max': 2,
+            'palette': ['#1e293b', '#10b981', '#06b6d4']
+        }
+        
+        # Generate direct, high-speed public thumbnail image maps URLs from GEE clusters
+        hydro_heatmap_url = classification_map.visualize(**vis_params).getThumbURL({
+            'dimensions': 1024,
+            'format': 'png'
+        })
+        # ========================================================
+
         return {
             "status": "success",
             "sector_type": "borehole",
+            "hydro_map_url": hydro_heatmap_url,
             "metrics": {
                 "flat_terrain_pct": flat_pct,
                 "deep_roots_pct": roots_pct,

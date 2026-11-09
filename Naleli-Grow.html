@@ -3,242 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naleli Grow | Farm Management Hub</title>
+    <title>Naleli Grow | Intelligent Farm Management</title>
+    <!-- Leaflet GIS Engine Stylesheets -->
+    <link rel="stylesheet" href="https://unpkg.com"/>
+    <link rel="stylesheet" href="https://unpkg.com"/>
     <style>
         :root {
-            --primary: #1b4d3e;
-            --accent: #2e7d32;
-            --dark: #121212;
-            --light: #f8f9fa;
-            --border: #e0e0e0;
+            --primary-fms: #1b4d3e;
+            --accent-growth: #2e7d32;
+            --sidebar-space: #141d1b;
+            --dark-canvas: #0f172a;
+            --card-slate: #1e293b;
+            --text-muted: #94a3b8;
+            --neon-blue: #38bdf8;
+            --border-line: #334155;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--light);
-            color: var(--dark);
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0;
+            background-color: var(--dark-canvas);
+            color: #f1f5f9;
+            display: flex; height: 100vh; overflow: hidden;
         }
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Farmbrite Sidebar Framework */
+        .sidebar-fms {
+            width: 260px;
+            background-color: var(--sidebar-space);
+            border-right: 1px solid var(--border-line);
+            display: flex; flex-direction: column; justify-content: space-between;
+            z-index: 100; transition: all 0.3s;
         }
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        .brand-header {
+            padding: 1.5rem; font-size: 1.3rem; font-weight: bold;
+            letter-spacing: 1px; color: #fff; border-bottom: 1px solid var(--border-line);
+            display: flex; align-items: center; gap: 8px;
         }
-        .welcome-banner {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
+        .menu-list { list-style: none; padding: 0; margin: 0; }
+        .menu-list li {
+            padding: 1rem 1.5rem; cursor: pointer; border-bottom: 1px solid #1a2624;
+            display: flex; align-items: center; gap: 12px; font-weight: 500; transition: 0.2s;
         }
-        /* Farmkeep-inspired minimal tab navigation */
-        .fms-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 0.5rem;
+        .menu-list li:hover, .menu-list li.active {
+            background-color: var(--accent-growth); color: #fff;
         }
-        .tab-btn {
-            background: none;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-radius: 4px;
+        .footer-workspace { padding: 1.2rem; background: #0e1413; border-top: 1px solid var(--border-line); }
+        
+        /* Layout Spaces */
+        .app-container { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .top-nav {
+            height: 65px; background-color: var(--card-slate); display: flex;
+            align-items: center; justify-content: space-between; padding: 0 2rem;
+            border-bottom: 1px solid var(--border-line);
         }
-        .tab-btn:hover {
-            background: rgba(0,0,0,0.05);
+        .view-panel { padding: 2rem; display: none; }
+        .view-panel.active { display: block; }
+        
+        /* Component Cards */
+        .panel-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 2rem; }
+        @media(max-width: 992px) { .panel-grid { grid-template-columns: 1fr; } }
+        .fms-card {
+            background-color: var(--card-slate); border: 1px solid var(--border-line);
+            border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;
         }
-        .tab-btn.active {
-            color: var(--accent);
-            background: rgba(46, 125, 50, 0.1);
-        }
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .tab-content.active {
-            display: block;
-        }
-        /* Layout Grids */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        @media(max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
-        /* Form & UI Elements */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
+        
+        /* Map Setup */
+        #fms-map-canvas { height: 420px; border-radius: 6px; border: 1px solid var(--border-line); margin-bottom: 1rem; }
+        
+        /* Input elements */
+        .input-group { margin-bottom: 1.25rem; }
+        .input-group label { display: block; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
         input, select, textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 1rem;
+            width: 100%; padding: 0.75rem; background: var(--dark-canvas); border: 1px solid var(--border-line);
+            color: #fff; border-radius: 4px; box-sizing: border-box;
         }
-        .btn-submit {
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
+        .action-button {
+            background-color: var(--accent-growth); color: white; border: none; padding: 0.8rem 1.5rem;
+            border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s;
         }
-        .btn-submit:hover {
-            background-color: #1b5e20;
+        .action-button:hover { background-color: #1b5e20; }
+        
+        /* Output Logger Console */
+        .terminal-output {
+            background-color: #020617; font-family: monospace; padding: 1rem;
+            border-radius: 4px; border: 1px solid var(--border-line); height: 220px;
+            overflow-y: auto; color: var(--neon-blue); font-size: 0.9rem; line-height: 1.4;
         }
-        /* Telemetry Terminal */
-        .terminal-box {
-            background: #272822;
-            color: #f8f8f2;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 1rem;
-            border-radius: 4px;
-            overflow-x: auto;
-            margin-top: 1rem;
-        }
-        .status-pill {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
+        .weather-row { display: flex; gap: 1rem; margin-top: 1rem; }
+        .weather-node { background: #334155; padding: 1rem; border-radius: 6px; flex: 1; text-align: center; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div style="font-weight: bold; font-size: 1.2rem;">STARi COMMAND</div>
-        <nav style="display: flex; gap: 1rem;">
-            <a href="portal.html" style="color: white; text-decoration: none;">Main Portal</a>
-            <a href="#" style="color: white; font-weight: bold; text-decoration: none;">Farm Hub</a>
-        </nav>
-    </header>
+    <!-- Farmbrite Layout Sidebar -->
+    <div class="sidebar-fms">
+        <div>
+            <div class="brand-header">🌱 Naleli Grow</div>
+            <ul class="menu-list">
+                <li class="active" onclick="switchFmsView('dashboard')">📊 Hub Dashboard</li>
+                <li onclick="switchFmsView('fields')">🗺️ Fields & Plots</li>
+                <li onclick="switchFmsView('tasks')">📋 Task Planner</li>
+                <li onclick="switchFmsView('account')">🔑 Access Setup</li>
+            </ul>
+        </div>
+        <div class="footer-workspace">
+            <small style="color: var(--text-muted);">Active Registry:</small>
+            <div id="active-farm-display" style="font-weight: bold; color: #a7f3d0;">No Farm Added Yet</div>
+        </div>
+    </div>
 
-    <div class="container">
-        <div class="welcome-banner">
-            <h1>🧑‍🌾 Farm Management Command</h1>
-            <p>Seamlessly deploy satellite analytics vectors across your crop lines, track herd lifecycles, and optimize operations using our integrated engine.</p>
+    <!-- App Engine Container -->
+    <div class="app-container">
+        <div class="top-nav">
+            <h2 style="margin:0; font-size: 1.25rem;">Agricultural Analytics Pipeline</h2>
+            <div style="font-size: 0.85rem; background: rgba(46,125,50,0.2); padding: 0.4rem 0.8rem; border-radius: 20px; color:#4ade80;">
+                🛰️ Telemetry Core Engaged
+            </div>
         </div>
 
-        <!-- Navigation Tabs (Farmkeep Simplicity) -->
-        <div class="fms-tabs">
-            <button class="tab-btn active" onclick="switchTab('fields')">🌾 Fields & Satellite Scan</button>
-            <button class="tab-btn" onclick="switchTab('livestock')">🐄 Livestock Registry</button>
-            <button class="tab-btn" onclick="switchTab('tasks')">📋 Operations & Tasks</button>
-        </div>
-
-        <!-- TAB 1: Fields & Copied Analytics Engine -->
-        <div id="fields" class="tab-content active">
-            <div class="grid-2">
+        <!-- TAB 1: Hub Dashboard -->
+        <div id="panel-dashboard" class="view-panel active">
+            <div class="panel-grid">
                 <div>
-                    <h2>Field Definition & Telemetry</h2>
-                    <p class="small text-muted">Map your spatial parameters below to cue automatic crop health matrix scans via satellite passover.</p>
-                    <form id="fieldScanForm" onsubmit="handleScanSubmit(event)">
-                        <div class="form-group">
-                            <label for="fieldName">Field Identifier / Name</label>
-                            <input type="text" id="fieldName" placeholder="e.g., North Pivot Maize" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cropType">Active Crop Specie</label>
-                            <select id="cropType">
-                                <option value="maize">Maize / Corn</option>
-                                <option value="soybeans">Soybeans</option>
-                                <option value="wheat">Wheat</option>
-                                <option value="pasture">Forage / Pasture</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Spatial Coordinates (Vertex Bounding Box)</label>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                <input type="text" id="v1" placeholder="Vertex 1 Lat/Long" required>
-                                <input type="text" id="v2" placeholder="Vertex 2 Lat/Long" required>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                                <input type="text" id="v3" placeholder="Vertex 3 Lat/Long" required>
-                                <input type="text" id="v4" placeholder="Vertex 4 Lat/Long" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn-submit">Initialize Target Scan</button>
-                    </form>
+                    <div class="fms-card">
+                        <h3>🗺️ Live Field Boundary Engine</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top:-0.5rem;">Use the polygon drawing toolkit overlay to outline your crops field directly onto the satellite map grid.</p>
+                        <div id="fms-map-canvas"></div>
+                        <button class="action-button" onclick="dispatchPolygonTelemetry()">Process Captured Field Coordinates</button>
+                    </div>
                 </div>
                 <div>
-                    <h2>Live Orbit Core Output</h2>
-                    <span class="status-pill">🌱 Crop Analytics Vector Array Online</span>
-                    <div class="terminal-box" id="telemetryTerminal">
-                        &gt; System awaiting vector telemetry payloads...<br>
-                        &gt; Ready to inject agricultural bounding profiles into core layers.
+                    <div class="fms-card">
+                        <h3>🌤️ Macro Environment Weather Feed</h3>
+                        <div id="weather-fallback-text">Awaiting dynamic spatial mapping telemetry inputs...</div>
+                        <div class="weather-row" id="weather-stat-metrics" style="display:none;">
+                            <div class="weather-node"><b id="temp-val">--</b><br><small style="color:var(--text-muted);">Air Temp</small></div>
+                            <div class="weather-node"><b id="hum-val">--</b><br><small style="color:var(--text-muted);">Relative Hum</small></div>
+                        </div>
+                    </div>
+                    <div class="fms-card">
+                        <h3>⚡ Spatial Engine Matrix Result Logs</h3>
+                        <div class="terminal-output" id="portalLogMatrix">
+                            &gt; Naleli Grow module core online.<br>
+                            &gt; System standby: Ready to intercept spatial coordinate matrix payloads...
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- TAB 2: Livestock Registry (Farmbrite Feature Integration) -->
-        <div id="livestock" class="tab-content">
-            <h2>Herd & Livestock Management</h2>
-            <p>Track biological milestones, treatments, and distribution mapping.</p>
-            <div class="grid-2">
-                <form id="livestockForm" onsubmit="handleLivestockSubmit(event)">
-                    <div class="form-group">
-                        <label for="animalTag">Tag ID / Number</label>
-                        <input type="text" id="animalTag" placeholder="e.g., L-4092" required>
+        <!-- TAB 2: Add New Farm Infrastructure -->
+        <div id="panel-fields" class="view-panel">
+            <div class="fms-card" style="max-width: 550px;">
+                <h3>🏡 Configure New Field Asset</h3>
+                <p style="color:var(--text-muted); font-size:0.85rem;">Establish your structural production baseline context bounds below.</p>
+                <form id="farmOnboardForm" onsubmit="commitFarmStructure(event)">
+                    <div class="input-group">
+                        <label>Farm Location/Enterprise Identity Name</label>
+                        <input type="text" id="inputFarmName" placeholder="e.g., Lusaka West Sector Alpha" required>
                     </div>
-                    <div class="form-group">
-                        <label for="animalType">Classification</label>
-                        <select id="animalType">
-                            <option value="beef">Beef Cattle</option>
-                            <option value="dairy">Dairy Cattle</option>
-                            <option value="poultry">Poultry (Layers/Broilers)</option>
-                            <option value="swine">Swine</option>
+                    <div class="input-group">
+                        <label>Agronomic Plant Species Matrix</label>
+                        <select id="inputCropChoice">
+                            <option value="Maize">Maize / White Grain Corn</option>
+                            <option value="Soybeans">Soybeans / Oilseed</option>
+                            <option value="Wheat">Wheat Crops</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="healthStatus">Current Wellness Status</label>
-                        <select id="healthStatus">
-                            <option value="healthy">Healthy / Optimal</option>
-                            <option value="treatment">Under Active Treatment</option>
-                            <option value="quarantine">Quarantine Isolation</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-submit">Log Asset Status</button>
+                    <button type="submit" class="action-button">Onboard Farm Asset</button>
                 </form>
-                <div>
-                    <h3>Active Livestock Ledger</h3>
-                    <div class="terminal-box" id="livestockLog">
-                        &gt; [SYSTEM] Loaded active tracking arrays...<br>
-                        &gt; No active health exclusions logged today.
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- TAB 3: Operations & Tasks (Agworld & Farmbrite Feature) -->
+        <!-- TAB 3: Operational Schedules & Tasks Checklists -->
+        <div id="panel-tasks" class="view-panel">
+            <div class="fms-card">
+                <h3>📋 Task Scheduler & Operations Dispatch Matrix</h3>
+                <form id="taskSchedulerForm" onsubmit="pushTaskRowNode(event)" style="display:flex; gap:1rem; align-items:flex-end; margin-bottom:1.5rem;">
+                    <div style="flex:2;">
+                        <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.5rem;">Operational Instructions Task Check</label>
+                        <input type="text" id="formTaskText" placeholder="e.g., Deploy side-dress nitrogen fertilizer layer" required>
+                    </div>
+                    <div style="flex:1;">
+                        <label style="color:var(--text-muted); font-size:0.85rem; display:block; margin-bottom:0.5rem;">Target Timeline Date</label>
+                        <input type="date" id="formTaskDate" required>
+                    </div>
